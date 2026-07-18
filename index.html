@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YT Script Writer Pro v14.2 - New Note Fix</title>
+	
+	<!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#121212">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     
     <!-- FIREBASE COMPAT (Sincronización en la Nube) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -840,6 +845,13 @@
         document.getElementById('pace-select').addEventListener('change', (e) => {
             currentWPM = parseInt(e.target.value); localStorage.setItem('yt-pro-pace', currentWPM); updateStats();
         });
+		
+		
+		<!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#121212">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+	
     </script>
 </body>
 </html>

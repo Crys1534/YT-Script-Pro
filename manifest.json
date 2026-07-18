@@ -1,0 +1,21 @@
+{
+  "name": "YT Script Writer Pro",
+  "short_name": "YT Script Pro",
+  "description": "App para escribir y sincronizar guiones de YouTube",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
