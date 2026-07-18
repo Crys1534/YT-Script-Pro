@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v13.2 - God Mode (Corregido)</title>
+    <title>YT Script Writer Pro v13.3 - Cloud Sync (Import Fix)</title>
     
     <!-- FIREBASE COMPAT (Sincronización en la Nube) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -257,7 +257,9 @@
         </ul>
 
         <div class="sidebar-tools">
+            <!-- INPUT OCULTO RESTAURADO AQUÍ -->
             <input type="file" id="import-file" style="display: none;" accept=".json">
+            
             <button id="btn-import-side" class="btn-side-tool" title="Restaurar una copia de seguridad">
                 <span>📥</span> <span class="tool-label">Cargar Backup</span>
             </button>
@@ -428,6 +430,7 @@
         const modalContent = document.getElementById('modal-content');
         const modeSelect = document.getElementById('mode-select');
         const editorWrapper = document.getElementById('editor-wrapper');
+        const importFileInput = document.getElementById('import-file');
         
         let notes = [];
         let currentNoteId = null;
@@ -642,7 +645,6 @@
                 
                 const ed = block.querySelector('.section-editor');
                 
-                // Rastreo de foco para herramientas de formato
                 ed.addEventListener('focus', () => lastActiveEditor = ed);
                 
                 ed.addEventListener('input', () => triggerMasterSave());
@@ -650,7 +652,6 @@
                 block.querySelector('.sec-limit-input').addEventListener('input', () => triggerMasterSave(true));
                 ed.addEventListener('paste', handlePaste);
 
-                // --- RESTAURACIÓN DE ATAJOS DE TECLADO ---
                 ed.addEventListener('keydown', (e) => {
                     if (e.ctrlKey || e.metaKey) {
                         const key = e.key.toLowerCase();
@@ -708,7 +709,6 @@
                     let node = range.startContainer;
                     let isInsideEditor = false;
                     
-                    // Buscar a qué sección pertenece el renglón clickeado
                     while (node && node !== document.body) {
                         if (node.classList && node.classList.contains('section-editor')) {
                             isInsideEditor = true;
@@ -878,7 +878,6 @@
         document.getElementById('btn-toggle-video').addEventListener('click', () => document.getElementById('video-panel').classList.toggle('active'));
         document.getElementById('btn-new-note').addEventListener('click', () => createNewNote(true));
         
-        // --- FORMATO CORREGIDO ---
         function format(command, val=null) { 
             document.execCommand(command, false, val); 
             if (lastActiveEditor) lastActiveEditor.focus();
@@ -887,12 +886,47 @@
         
         function handlePaste(e) { e.preventDefault(); document.execCommand('insertText', false, (e.originalEvent||e).clipboardData.getData('text/plain')); }
         
-        // --- BACKUP MANUAL ---
+        // --- EVENTO DE IMPORTACIÓN CORREGIDO ---
         document.getElementById('btn-export-side').addEventListener('click', () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({notes, pace: currentWPM}, null, 2));
             const a = document.createElement('a'); a.href = dataStr; a.download = `YT_ScriptPro_Full_Backup.json`; document.body.appendChild(a); a.click(); a.remove();
         });
-        document.getElementById('btn-import-side').addEventListener('click', () => document.getElementById('import-file').click());
+        
+        document.getElementById('btn-import-side').addEventListener('click', () => importFileInput.click());
+
+        importFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.notes && Array.isArray(data.notes)) {
+                        notes = data.notes;
+                        
+                        // 1. Convertir a string
+                        const jsonString = JSON.stringify(notes);
+                        // 2. Comprimir con LZ-String
+                        const compressedString = LZString.compressToUTF16(jsonString);
+                        
+                        // 3. Guardar en IndexedDB
+                        await setLocalVault('compressed_notes', compressedString);
+                        // 4. Sincronizar a la nube de inmediato
+                        dbRef.set(compressedString); 
+                    }
+                    if (data.pace) localStorage.setItem('yt-pro-pace', data.pace);
+                    if (data.fontsize) localStorage.setItem('yt-pro-fontsize', data.fontsize);
+                    
+                    alert('✅ Backup restaurado y sincronizado con éxito. La página se actualizará.');
+                    location.reload();
+                } catch (err) {
+                    alert('❌ Error: El archivo no es un backup válido o está dañado.');
+                }
+                importFileInput.value = ''; 
+            };
+            reader.readAsText(file);
+        });
 
         document.getElementById('font-size').addEventListener('change', (e) => {
             const newSize = e.target.value;
