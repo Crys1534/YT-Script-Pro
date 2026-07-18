@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v14.1 - Modo Lectura Fix</title>
+    <title>YT Script Writer Pro v14.2 - New Note Fix</title>
     
     <!-- FIREBASE COMPAT (Sincronización en la Nube) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -428,6 +428,7 @@
                 renderAllUIs();
                 updateStorageMeter(localData);
             } else {
+                if (notes.length === 0) createNewNote(false);
                 renderAllUIs();
             }
 
@@ -449,6 +450,7 @@
         }
         bootApp();
 
+        // Traductor automático: Si el backup tenía "sections", las une en una sola hoja.
         function verifyAndMigrate() {
             let changed = false;
             notes.forEach(note => {
@@ -502,6 +504,30 @@
             const percentage = Math.min((bytes / 1024 / MAX_KB) * 100, 100);
             storageText.textContent = `${kb} KB / 50 MB visual`;
             storageBar.style.width = `${percentage}%`;
+        }
+
+        // --- FUNCIONES DE NUEVA NOTA Y ELIMINACIÓN ---
+        function createNewNote(openModal = true) {
+            const newNote = { 
+                id: Date.now().toString(), 
+                title: '', 
+                content: '', 
+                updatedAt: Date.now(),
+                videos: [] 
+            };
+            notes.push(newNote);
+            triggerMasterSave(true);
+            renderAllUIs();
+            if(openModal) openNoteModal(newNote.id);
+        }
+
+        function deleteNote(id, event) {
+            event.stopPropagation();
+            if (confirm('¿Eliminar permanentemente?')) {
+                notes = notes.filter(n => n.id !== id);
+                triggerMasterSave(true);
+                renderAllUIs();
+            }
         }
 
         // --- DRAG & DROP Y BACKUPS ---
@@ -618,15 +644,6 @@
                 `;
                 notesGridUI.appendChild(card);
             });
-        }
-
-        function deleteNote(id, event) {
-            event.stopPropagation();
-            if (confirm('¿Eliminar permanentemente?')) {
-                notes = notes.filter(n => n.id !== id);
-                triggerMasterSave(true);
-                renderAllUIs();
-            }
         }
 
         function openNoteModal(id) {
