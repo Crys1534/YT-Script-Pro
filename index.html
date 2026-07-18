@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v13 - God Mode (Compresión & Sync)</title>
+    <title>YT Script Writer Pro v13.2 - God Mode (Corregido)</title>
     
     <!-- FIREBASE COMPAT (Sincronización en la Nube) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -37,6 +37,29 @@
             margin: 0; height: 100vh; background-color: var(--bg-color); color: var(--text-color);
             font-family: var(--font-main); overflow: hidden; display: flex;
         }
+
+        /* --- SKELETON LOADING ANIMATION --- */
+        @keyframes skeleton-glow {
+            0% { background-color: #2a2a2a; }
+            50% { background-color: #3d3d3d; }
+            100% { background-color: #2a2a2a; }
+        }
+        .skeleton {
+            animation: skeleton-glow 1.5s ease-in-out infinite;
+            border-radius: 4px;
+        }
+        .skel-text { height: 14px; margin-bottom: 12px; width: 100%; }
+        .skel-text.short { width: 60%; }
+        .skel-title { height: 22px; width: 80%; margin-bottom: 20px; }
+        .skel-card { 
+            padding: 20px; border-radius: 12px; 
+            border: 1px solid var(--border-color); 
+            background-color: var(--surface-color); 
+            height: 250px; display: flex; flex-direction: column;
+        }
+        .skel-footer { margin-top: auto; height: 12px; width: 40%; }
+        .skel-sidebar-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; border-bottom: 1px solid var(--border-color); }
+        .skel-icon { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; }
 
         /* --- BOTONES Y CONTROLES --- */
         button, select, input {
@@ -92,7 +115,6 @@
         }
         .btn-side-tool:hover { background: var(--toolbar-bg); }
 
-        /* Ocultar textos en modo colapsado */
         #sidebar.collapsed .sidebar-title,
         #sidebar.collapsed .storage-details,
         #sidebar.collapsed .tool-label,
@@ -227,8 +249,11 @@
             </div>
         </div>
 
+        <!-- SKELETON EN LA BARRA LATERAL -->
         <ul class="sidebar-notes-list" id="sidebar-notes-list">
-            <!-- Títulos en la barra lateral -->
+            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0;"></div></li>
+            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0; width:60%"></div></li>
+            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0; width:80%"></div></li>
         </ul>
 
         <div class="sidebar-tools">
@@ -260,7 +285,23 @@
                 <h2>Todos mis Guiones</h2>
                 <button id="btn-new-note" class="btn-primary">+ Nuevo Guion Libre</button>
             </div>
-            <div class="notes-grid" id="notes-grid"></div>
+            
+            <!-- SKELETON EN LA CUADRÍCULA -->
+            <div class="notes-grid" id="notes-grid">
+                <div class="skel-card">
+                    <div class="skeleton skel-title"></div>
+                    <div class="skeleton skel-text"></div>
+                    <div class="skeleton skel-text"></div>
+                    <div class="skeleton skel-text short"></div>
+                    <div class="skeleton skel-footer"></div>
+                </div>
+                <div class="skel-card">
+                    <div class="skeleton skel-title" style="width:50%"></div>
+                    <div class="skeleton skel-text"></div>
+                    <div class="skeleton skel-text short"></div>
+                    <div class="skeleton skel-footer"></div>
+                </div>
+            </div>
         </main>
 
         <!-- MODAL (EDITOR) -->
@@ -288,15 +329,15 @@
                         </div>
 
                         <div class="toolbar" id="toolbar">
-                            <button onclick="format('bold')"><b>B</b></button>
-                            <button onclick="format('italic')"><i>I</i></button>
-                            <button onclick="format('underline')"><u>U</u></button>
+                            <button onmousedown="event.preventDefault(); format('bold')"><b>B</b></button>
+                            <button onmousedown="event.preventDefault(); format('italic')"><i>I</i></button>
+                            <button onmousedown="event.preventDefault(); format('underline')"><u>U</u></button>
                             <span style="border-right: 1px solid var(--border-color); height: 20px; margin: 0 5px;"></span>
-                            <button onclick="format('formatBlock', 'H1')">H1</button>
-                            <button onclick="format('formatBlock', 'H2')">H2</button>
-                            <button onclick="format('formatBlock', 'H3')">H3</button>
+                            <button onmousedown="event.preventDefault(); format('formatBlock', 'H1')">H1</button>
+                            <button onmousedown="event.preventDefault(); format('formatBlock', 'H2')">H2</button>
+                            <button onmousedown="event.preventDefault(); format('formatBlock', 'H3')">H3</button>
                             <span style="border-right: 1px solid var(--border-color); height: 20px; margin: 0 5px;"></span>
-                            <button onclick="format('fontName', 'Consolas')">&lt;/&gt;</button>
+                            <button onmousedown="event.preventDefault(); format('fontName', 'Consolas')">&lt;/&gt;</button>
                             <span style="flex: 1;"></span>
                             <select id="font-size">
                                 <option value="16px">16px</option>
@@ -351,7 +392,7 @@
         firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref('yt_script_writer_compressed');
 
-        // --- 2. BÓVEDA INDEXED-DB (Almacenamiento Infinito Local) ---
+        // --- 2. BÓVEDA INDEXED-DB ---
         const DB_NAME = "YTScriptProDB";
         function initDB() {
             return new Promise((resolve, reject) => {
@@ -385,9 +426,12 @@
         const storageBar = document.getElementById('storage-bar');
         const modal = document.getElementById('editor-modal');
         const modalContent = document.getElementById('modal-content');
+        const modeSelect = document.getElementById('mode-select');
+        const editorWrapper = document.getElementById('editor-wrapper');
         
         let notes = [];
         let currentNoteId = null;
+        let lastActiveEditor = null; // Rastrea qué sección está enfocada
         let currentWPM = parseInt(localStorage.getItem('yt-pro-pace')) || 145;
         let autoSaveTimer;
 
@@ -395,7 +439,6 @@
         async function bootApp() {
             document.getElementById('pace-select').value = currentWPM;
             
-            // Intentar cargar bóveda local primero (Carga ultrarrápida offline)
             const localData = await getLocalVault('compressed_notes');
             if (localData) {
                 notes = JSON.parse(LZString.decompressFromUTF16(localData) || '[]');
@@ -406,7 +449,6 @@
                 verifyTemplate();
             }
 
-            // Sincronización en tiempo real con Firebase
             dbRef.on('value', async (snapshot) => {
                 const cloudCompressed = snapshot.val();
                 if (cloudCompressed) {
@@ -414,7 +456,7 @@
                     if (cloudJSON) {
                         notes = JSON.parse(cloudJSON);
                         await setLocalVault('compressed_notes', cloudCompressed);
-                        renderAllUIs();
+                        renderAllUIs(); 
                         updateStorageMeter(cloudCompressed);
                         syncStatus.textContent = "☁️ Sincronizado";
                         setTimeout(() => syncStatus.textContent = "", 2000);
@@ -440,13 +482,12 @@
             }
         }
 
-        // --- 4. MOTOR DE GUARDADO Y COMPRESIÓN (LZW) ---
+        // --- 4. MOTOR DE GUARDADO ---
         async function triggerMasterSave(immediate = false) {
             syncStatus.textContent = "⚙️ Comprimiendo...";
             clearTimeout(autoSaveTimer);
             
             const saveFunc = async () => {
-                // Actualizar la nota abierta actualmente antes de guardar
                 if (currentNoteId) {
                     const note = notes.find(n => n.id === currentNoteId);
                     if (note) {
@@ -466,16 +507,13 @@
                     }
                 }
                 
-                // Aplicar la Compresión de los Dioses
                 const jsonString = JSON.stringify(notes);
                 const compressedString = LZString.compressToUTF16(jsonString);
                 
-                // Guardar en la bóveda local (IndexedDB)
                 await setLocalVault('compressed_notes', compressedString);
                 updateStorageMeter(compressedString);
-                renderSidebarList(); // Refrescar títulos
+                renderSidebarList(); 
                 
-                // Empujar a Firebase
                 syncStatus.textContent = "☁️ Subiendo...";
                 dbRef.set(compressedString)
                     .then(() => { syncStatus.textContent = "☁️ Sincronizado"; setTimeout(() => syncStatus.textContent = "", 2000); })
@@ -486,18 +524,13 @@
             else autoSaveTimer = setTimeout(saveFunc, 800);
         }
 
-        // --- MEDIDOR DE ALMACENAMIENTO ---
         function updateStorageMeter(compressedData) {
-            // Calculamos el peso en bytes. Caracteres UTF-16 pesan 2 bytes.
             const bytes = compressedData.length * 2;
             const kb = (bytes / 1024).toFixed(2);
-            
-            // Límite visual: 50 MB (para demostrar que sobra espacio)
             const MAX_KB = 51200; 
             const percentage = Math.min((bytes / 1024 / MAX_KB) * 100, 100);
-            
-            storageText.textContent = `${kb} KB / 50 MB`;
-            storageBar.style.width = `${percentage}%`;
+            document.getElementById('storage-text').textContent = `${kb} KB / 50 MB`;
+            document.getElementById('storage-bar').style.width = `${percentage}%`;
         }
 
         // --- INTERFAZ UI ---
@@ -589,7 +622,7 @@
             renderAllUIs();
         });
 
-        // --- SISTEMA DE SECCIONES (IGUAL A LA V12) ---
+        // --- SISTEMA DE SECCIONES CORREGIDO ---
         function renderSectionsUI(sections) {
             sectionsContainer.innerHTML = '';
             sections.forEach(sec => {
@@ -608,11 +641,30 @@
                 sectionsContainer.appendChild(block);
                 
                 const ed = block.querySelector('.section-editor');
+                
+                // Rastreo de foco para herramientas de formato
+                ed.addEventListener('focus', () => lastActiveEditor = ed);
+                
                 ed.addEventListener('input', () => triggerMasterSave());
                 block.querySelector('.sec-title-input').addEventListener('input', () => triggerMasterSave());
                 block.querySelector('.sec-limit-input').addEventListener('input', () => triggerMasterSave(true));
-                
                 ed.addEventListener('paste', handlePaste);
+
+                // --- RESTAURACIÓN DE ATAJOS DE TECLADO ---
+                ed.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        const key = e.key.toLowerCase();
+                        if (key === 'b') { e.preventDefault(); format('bold'); }
+                        if (key === 'i') { e.preventDefault(); format('italic'); }
+                        if (key === 'u') { e.preventDefault(); format('underline'); }
+                    }
+                    if (e.key === 'Enter') {
+                        const formatNode = document.queryCommandValue('formatBlock');
+                        if (formatNode === 'h1' || formatNode === 'h2' || formatNode === 'h3') {
+                            setTimeout(() => format('formatBlock', 'div'), 10);
+                        }
+                    }
+                });
             });
         }
 
@@ -633,7 +685,66 @@
                 triggerMasterSave(true);
             }
         }
-        window.deleteSection = deleteSection;
+
+        // --- DETECCIÓN INTELIGENTE DE CURSOR (RESTURADO Y ADAPTADO) ---
+        editorWrapper.addEventListener('mousedown', function(e) {
+            if (modeSelect.value === 'editor' && e.target === editorWrapper) {
+                e.preventDefault();
+
+                let range = null;
+                if (document.caretRangeFromPoint) { 
+                    range = document.caretRangeFromPoint(e.clientX, e.clientY);
+                } else if (document.caretPositionFromPoint) { 
+                    const pos = document.caretPositionFromPoint(e.clientX, e.clientY);
+                    if (pos) {
+                        range = document.createRange();
+                        range.setStart(pos.offsetNode, pos.offset);
+                        range.collapse(true);
+                    }
+                }
+
+                const sel = window.getSelection();
+                if (range) {
+                    let node = range.startContainer;
+                    let isInsideEditor = false;
+                    
+                    // Buscar a qué sección pertenece el renglón clickeado
+                    while (node && node !== document.body) {
+                        if (node.classList && node.classList.contains('section-editor')) {
+                            isInsideEditor = true;
+                            lastActiveEditor = node;
+                            node.focus();
+                            break;
+                        }
+                        node = node.parentNode;
+                    }
+
+                    if (isInsideEditor) {
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    } else {
+                        focusLastAvailableEditor(sel);
+                    }
+                } else {
+                    focusLastAvailableEditor(sel);
+                }
+            }
+        });
+
+        function focusLastAvailableEditor(sel) {
+            const editors = document.querySelectorAll('.section-editor');
+            if (editors.length > 0) {
+                const lastEd = editors[editors.length - 1];
+                lastActiveEditor = lastEd;
+                lastEd.focus();
+                
+                const fallbackRange = document.createRange();
+                fallbackRange.selectNodeContents(lastEd);
+                fallbackRange.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(fallbackRange);
+            }
+        }
 
         // Semáforo Lógico
         function updateSectionFormatting(editorEl) {
@@ -698,7 +809,6 @@
             textNode.parentNode.insertBefore(span, textNode); span.appendChild(textNode);
         }
 
-        // Manejo de Cursor (Caret)
         function saveCaret(editor) {
             const sel = window.getSelection();
             if (sel.rangeCount > 0 && editor.contains(sel.focusNode)) {
@@ -718,7 +828,6 @@
             } else { if(s) s.remove(); if(e) e.remove(); }
         }
 
-        // Estadísticas Globales
         function updateGlobalStats() {
             let tW = 0, eS = 0;
             document.querySelectorAll('.section-editor').forEach(ed => {
@@ -761,24 +870,41 @@
                 ul.appendChild(li);
             });
         }
-        window.deleteVideoObj = (id) => { const n = notes.find(n=>n.id===currentNoteId); if(n){ n.videos=n.videos.filter(v=>v.id!==id); triggerMasterSave(true); renderVideoList(); updateGlobalStats(); }};
 
-        document.getElementById('btn-maximize').addEventListener('click', () => modalContent.classList.toggle('maximized'));
+        document.getElementById('btn-maximize').addEventListener('click', () => {
+            modalContent.classList.toggle('maximized');
+            document.getElementById('btn-maximize').textContent = modalContent.classList.contains('maximized') ? '🗗' : '🗖';
+        });
         document.getElementById('btn-toggle-video').addEventListener('click', () => document.getElementById('video-panel').classList.toggle('active'));
         document.getElementById('btn-new-note').addEventListener('click', () => createNewNote(true));
-        noteTitle.addEventListener('input', () => triggerMasterSave());
         
-        function format(command, val=null) { document.execCommand(command, false, val); triggerMasterSave(); }
+        // --- FORMATO CORREGIDO ---
+        function format(command, val=null) { 
+            document.execCommand(command, false, val); 
+            if (lastActiveEditor) lastActiveEditor.focus();
+            triggerMasterSave(); 
+        }
+        
         function handlePaste(e) { e.preventDefault(); document.execCommand('insertText', false, (e.originalEvent||e).clipboardData.getData('text/plain')); }
         
-        // --- BACKUP MANUAL (POR SI ACASO) ---
-        const btnExp = document.getElementById('btn-export-side');
-        if(!btnExp.onclick) btnExp.addEventListener('click', () => {
+        // --- BACKUP MANUAL ---
+        document.getElementById('btn-export-side').addEventListener('click', () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({notes, pace: currentWPM}, null, 2));
             const a = document.createElement('a'); a.href = dataStr; a.download = `YT_ScriptPro_Full_Backup.json`; document.body.appendChild(a); a.click(); a.remove();
         });
         document.getElementById('btn-import-side').addEventListener('click', () => document.getElementById('import-file').click());
 
+        document.getElementById('font-size').addEventListener('change', (e) => {
+            const newSize = e.target.value;
+            document.querySelectorAll('.section-editor').forEach(ed => ed.style.fontSize = newSize);
+            localStorage.setItem('yt-pro-fontsize', newSize);
+        });
+        
+        document.getElementById('pace-select').addEventListener('change', (e) => {
+            currentWPM = parseInt(e.target.value);
+            localStorage.setItem('yt-pro-pace', currentWPM);
+            updateGlobalStats();
+        });
     </script>
 </body>
 </html>
