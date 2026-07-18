@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v14 - Classic Flow & Drag Drop</title>
+    <title>YT Script Writer Pro v14.1 - Modo Lectura Fix</title>
     
     <!-- FIREBASE COMPAT (Sincronización en la Nube) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -91,7 +91,7 @@
         .storage-section {
             padding: 15px; border-top: 1px solid var(--border-color);
             display: flex; align-items: center; gap: 15px; overflow: hidden; white-space: nowrap;
-            margin-top: auto; /* MANDA ESTO HASTA ABAJO */
+            margin-top: auto; 
         }
         .storage-icon { font-size: 1.5rem; width: 30px; text-align: center; }
         .storage-details { flex: 1; display: flex; flex-direction: column; gap: 5px; }
@@ -449,7 +449,6 @@
         }
         bootApp();
 
-        // Traductor automático: Si el backup tenía "sections", las une en una sola hoja.
         function verifyAndMigrate() {
             let changed = false;
             notes.forEach(note => {
@@ -569,6 +568,17 @@
         document.getElementById('btn-close-settings').addEventListener('click', () => settingsModal.classList.remove('active'));
         settingsModal.addEventListener('click', (e) => { if(e.target === settingsModal) settingsModal.classList.remove('active'); });
 
+        // EVENTO RESTAURADO: Cambio a Modo Lectura/Edición
+        modeSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'lectura') {
+                modalContent.classList.add('mode-lectura');
+                editor.setAttribute('contenteditable', 'false');
+            } else {
+                modalContent.classList.remove('mode-lectura');
+                editor.setAttribute('contenteditable', 'true');
+            }
+        });
+
         function renderAllUIs() {
             renderNotesGrid();
             renderSidebarList();
@@ -627,8 +637,10 @@
                 editor.innerHTML = note.content || '';
                 if (!note.videos) note.videos = [];
                 
-                document.getElementById('mode-select').value = 'editor';
+                // Asegurar que abra en modo edición por defecto
+                modeSelect.value = 'editor';
                 modalContent.classList.remove('mode-lectura');
+                editor.setAttribute('contenteditable', 'true');
                 
                 renderVideoList();
                 modal.classList.add('active');
