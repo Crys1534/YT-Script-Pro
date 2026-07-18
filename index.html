@@ -847,11 +847,19 @@
         });
 		
 		
-		<!-- PWA Manifest & Theme -->
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#121212">
-    <link rel="apple-touch-icon" href="./icon-192.png">
-	
+		// --- 5. REGISTRO DEL SERVICE WORKER (Para PWA) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con éxito con el scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('El registro del ServiceWorker falló: ', err);
+                    });
+            });
+        }
+		
     </script>
 </body>
 </html>
