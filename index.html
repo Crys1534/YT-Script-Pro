@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v14.3 - Mobile Optimized</title>
+    <title>YT Script Writer Pro v14.4 - Bug Fixes & Mobile Fullscreen</title>
     
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="./manifest.json">
@@ -49,17 +49,11 @@
         .skel-text { height: 14px; margin-bottom: 12px; width: 100%; }
         .skel-text.short { width: 60%; }
         .skel-title { height: 22px; width: 80%; margin-bottom: 20px; }
-        .skel-card { 
-            padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); 
-            background-color: var(--surface-color); height: 250px; display: flex; flex-direction: column;
-        }
+        .skel-card { padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); background-color: var(--surface-color); height: 250px; display: flex; flex-direction: column; }
         .skel-footer { margin-top: auto; height: 12px; width: 40%; }
 
         /* --- BOTONES Y CONTROLES --- */
-        button, select, input {
-            background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; font-family: inherit;
-        }
+        button, select, input { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; font-family: inherit; }
         button:hover { filter: brightness(1.2); }
         .btn-primary { background-color: var(--accent-color); color: #fff; border: none; font-weight: bold; padding: 10px 20px; font-size: 1rem; }
         .btn-small { padding: 4px 8px; font-size: 0.85rem; }
@@ -86,7 +80,7 @@
         
         .btn-delete-card { position: absolute; top: 15px; right: 15px; background: rgba(255, 77, 77, 0.2); color: #ff4d4d; border: none; border-radius: 50%; width: 30px; height: 30px; opacity: 0; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;}
         .note-card:hover .btn-delete-card { opacity: 1; }
-        @media (max-width: 768px) { .btn-delete-card { opacity: 1; } } /* Siempre visible en móviles */
+        @media (max-width: 768px) { .btn-delete-card { opacity: 1; } } 
 
         /* --- MODALES (EDITOR Y CONFIGURACIÓN) --- */
         .modal-overlay {
@@ -96,18 +90,25 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
-        /* EDITOR 100% PANTALLA */
+        /* MODO VENTANA EN PC */
         .modal-content {
-            background-color: var(--bg-color); width: 100vw; height: 100vh;
-            display: flex; flex-direction: column; overflow: hidden;
-            border: none; border-radius: 0;
+            background-color: var(--bg-color); width: 95%; max-width: 950px; height: 90vh;
+            border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color); overflow: hidden; transform: translateY(20px); transition: transform 0.3s ease, width 0.3s, max-width 0.3s, height 0.3s;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-content.maximized { width: 100% !important; max-width: 100% !important; height: 100% !important; border-radius: 0 !important; border: none !important; }
+
+        /* MODO PANTALLA COMPLETA FORZADA EN CELULARES */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 100% !important; max-width: 100% !important; height: 100% !important;
+                border-radius: 0 !important; border: none !important; transform: translateY(0);
+            }
+            #btn-maximize { display: none !important; } /* Ocultar botón de maximizar en móviles */
         }
 
-        /* CONFIG MODAL */
-        #settings-modal .modal-content {
-            width: 95%; max-width: 500px; height: auto; max-height: 90vh;
-            border-radius: 12px; border: 1px solid var(--border-color);
-        }
+        #settings-modal .modal-content { width: 95%; max-width: 500px; height: auto; max-height: 90vh; border-radius: 12px; border: 1px solid var(--border-color); }
 
         .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .title-input { flex: 1; font-size: 1.5rem; font-weight: bold; background: transparent; border: none; color: var(--text-color); outline: none; min-width: 0; }
@@ -133,14 +134,14 @@
         .editor u { text-decoration-color: var(--accent-color); text-decoration-thickness: 2px; }
         .editor font[face="Consolas"] { font-family: 'Consolas', monospace; background-color: var(--surface-color) !important; padding: 2px 6px; border-radius: 4px; }
 
-        .editor span.ghost-text, .editor span.ghost-text * { color: #8a8a8a !important; font-style: italic !important; opacity: 0.8; }
+        /* EFECTO DE 85% DE TRANSPARENCIA PARA LOS [ ] Y === */
+        .editor span.ghost-text, .editor span.ghost-text * { color: #8a8a8a !important; font-style: italic !important; opacity: 0.15 !important; transition: opacity 0.2s; }
+        .editor span.ghost-text:hover { opacity: 0.8 !important; } /* Se vuelve legible al pasar el mouse por si ocupas leerlo */
 
         /* --- PANELES SECUNDARIOS --- */
         .video-panel { width: 320px; background-color: var(--toolbar-bg); border-left: 1px solid var(--border-color); display: none; flex-direction: column; }
         .video-panel.active { display: flex; }
-        @media (max-width: 768px) {
-            .video-panel { width: 100%; height: 40%; border-left: none; border-top: 1px solid var(--border-color); }
-        }
+        @media (max-width: 768px) { .video-panel { width: 100%; height: 40%; border-left: none; border-top: 1px solid var(--border-color); } }
         
         .video-panel-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold; }
         .video-list { flex: 1; overflow-y: auto; padding: 15px; list-style: none; margin: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -235,6 +236,7 @@
                             <option value="editor">Edición</option>
                             <option value="lectura">Lectura</option>
                         </select>
+                        <button class="btn-icon-head" id="btn-maximize" title="Pantalla completa">🗖</button>
                         <button class="btn-icon-head" id="btn-close-modal" title="Cerrar y guardar">✕</button>
                     </div>
                 </div>
@@ -254,13 +256,21 @@
                             <button onmousedown="event.preventDefault(); format('formatBlock', 'H2')">H2</button>
                             <button onmousedown="event.preventDefault(); format('formatBlock', 'H3')">H3</button>
                             <span style="border-right: 1px solid var(--border-color); height: 20px; margin: 0 5px;"></span>
+                            
+                            <!-- BOTÓN DE TEXTO NORMAL -->
+                            <button onmousedown="event.preventDefault(); format('formatBlock', 'div')" title="Texto Normal">Normal</button>
                             <button onmousedown="event.preventDefault(); format('fontName', 'Consolas')">&lt;/&gt;</button>
                             <span style="flex: 1;"></span>
+                            
                             <select id="font-size">
+                                <option value="12px">12px</option>
+                                <option value="14px">14px</option>
                                 <option value="16px">16px</option>
-                                <option value="18px" selected>18px</option>
+                                <option value="18px">18px</option>
                                 <option value="20px">20px</option>
+                                <option value="22px">22px</option>
                                 <option value="24px">24px</option>
+                                <option value="28px">28px</option>
                             </select>
                         </div>
                     </div>
@@ -296,7 +306,7 @@
 
         <!-- MODAL CONFIGURACIÓN -->
         <div class="modal-overlay" id="settings-modal">
-            <div class="modal-content" style="height: auto;">
+            <div class="modal-content" style="width: 95%; max-width: 500px; height: auto; max-height: 90vh; border-radius: 12px;">
                 <div class="modal-header">
                     <h2 style="margin:0; font-size: 1.5rem;">⚙️ Configuración</h2>
                     <button class="btn-icon-head" id="btn-close-settings">✕</button>
@@ -310,14 +320,6 @@
                             <button id="btn-import-settings" class="btn-secondary" style="flex:1;">📥 Cargar</button>
                             <button id="btn-export-settings" class="btn-primary" style="flex:1;">📤 Guardar</button>
                         </div>
-                    </div>
-                    
-                    <div class="storage-section" style="margin-top: 10px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                        <h4 style="margin-top: 0; margin-bottom: 10px;">📦 Almacenamiento Local (IndexedDB)</h4>
-                        <div class="storage-meter" style="width: 100%; height: 8px; background-color: var(--bg-color); border-radius: 4px; margin-bottom: 5px; overflow: hidden;">
-                            <div id="storage-bar" style="width: 0%; height: 100%; background-color: var(--accent-color); transition: width 0.3s;"></div>
-                        </div>
-                        <span id="storage-text" style="font-size: 0.85rem; color: #aaa;">Calculando...</span>
                     </div>
                 </div>
             </div>
@@ -368,8 +370,6 @@
         const noteTitle = document.getElementById('note-title');
         const notesGridUI = document.getElementById('notes-grid');
         const syncStatus = document.getElementById('sync-status');
-        const storageText = document.getElementById('storage-text');
-        const storageBar = document.getElementById('storage-bar');
         const modal = document.getElementById('editor-modal');
         const modalContent = document.getElementById('modal-content');
         const modeSelect = document.getElementById('mode-select');
@@ -391,7 +391,6 @@
                 notes = JSON.parse(LZString.decompressFromUTF16(localData) || '[]');
                 verifyAndMigrate();
                 renderAllUIs();
-                updateStorageMeter(localData);
             } else {
                 renderAllUIs();
             }
@@ -405,7 +404,6 @@
                         verifyAndMigrate();
                         await setLocalVault('compressed_notes', cloudCompressed);
                         renderAllUIs(); 
-                        updateStorageMeter(cloudCompressed);
                         syncStatus.textContent = "☁️ Sincronizado";
                         setTimeout(() => syncStatus.textContent = "", 2000);
                     }
@@ -447,7 +445,6 @@
                 const compressedString = LZString.compressToUTF16(jsonString);
                 
                 await setLocalVault('compressed_notes', compressedString);
-                updateStorageMeter(compressedString);
                 
                 syncStatus.textContent = "☁️ Subiendo...";
                 dbRef.set(compressedString)
@@ -457,15 +454,6 @@
             
             if (immediate) saveFunc();
             else autoSaveTimer = setTimeout(saveFunc, 800);
-        }
-
-        function updateStorageMeter(compressedData) {
-            const bytes = compressedData.length * 2;
-            const kb = (bytes / 1024).toFixed(2);
-            const MAX_KB = 51200; // 50MB Visual Cap
-            const percentage = Math.min((bytes / 1024 / MAX_KB) * 100, 100);
-            storageText.textContent = `${kb} KB / 50 MB (Visual)`;
-            storageBar.style.width = `${percentage}%`;
         }
 
         // --- FUNCIONES DE NUEVA NOTA Y ELIMINACIÓN ---
@@ -488,16 +476,13 @@
 
         // --- DRAG & DROP Y BACKUPS ---
         document.body.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dragOverlay.classList.add('active');
+            e.preventDefault(); dragOverlay.classList.add('active');
         });
         document.body.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            if (e.target === dragOverlay) dragOverlay.classList.remove('active');
+            e.preventDefault(); if (e.target === dragOverlay) dragOverlay.classList.remove('active');
         });
         document.body.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dragOverlay.classList.remove('active');
+            e.preventDefault(); dragOverlay.classList.remove('active');
             if (e.dataTransfer.files.length > 0) {
                 const file = e.dataTransfer.files[0];
                 if (file.name.endsWith('.json')) processBackupFile(file);
@@ -530,18 +515,14 @@
                         await dbRef.set(compressedString); 
                     }
                     if (data.pace) {
-                        currentWPM = data.pace;
-                        localStorage.setItem('yt-pro-pace', data.pace);
-                        document.getElementById('pace-select').value = data.pace;
+                        currentWPM = data.pace; localStorage.setItem('yt-pro-pace', data.pace); document.getElementById('pace-select').value = data.pace;
                     }
                     if (data.fontsize) {
-                        localStorage.setItem('yt-pro-fontsize', data.fontsize);
-                        document.getElementById('font-size').value = data.fontsize;
+                        localStorage.setItem('yt-pro-fontsize', data.fontsize); document.getElementById('font-size').value = data.fontsize;
                     }
-                    renderAllUIs();
-                    updateStats();
+                    renderAllUIs(); updateStats();
                     if(syncStatus) { syncStatus.textContent = "☁️ Sincronizado"; setTimeout(() => syncStatus.textContent = "", 3000); }
-                    document.getElementById('settings-modal').classList.remove('active');
+                    settingsModal.classList.remove('active');
                     alert('✅ Backup restaurado y sincronizado con éxito.');
                 } catch (err) { alert('❌ Error: El archivo no es válido o está dañado.'); console.error(err); }
                 importFileInput.value = ''; 
@@ -554,23 +535,18 @@
         modal.addEventListener('mousedown', (e) => { if (e.target === modal) closeNoteModal(); });
         settingsModal.addEventListener('mousedown', (e) => { if(e.target === settingsModal) settingsModal.classList.remove('active'); });
         
-        // Ventana de configuración
         document.getElementById('btn-settings').addEventListener('click', () => settingsModal.classList.add('active'));
         document.getElementById('btn-close-settings').addEventListener('click', () => settingsModal.classList.remove('active'));
 
         modeSelect.addEventListener('change', (e) => {
             if (e.target.value === 'lectura') {
-                modalContent.classList.add('mode-lectura');
-                editor.setAttribute('contenteditable', 'false');
+                modalContent.classList.add('mode-lectura'); editor.setAttribute('contenteditable', 'false');
             } else {
-                modalContent.classList.remove('mode-lectura');
-                editor.setAttribute('contenteditable', 'true');
+                modalContent.classList.remove('mode-lectura'); editor.setAttribute('contenteditable', 'true');
             }
         });
 
-        function renderAllUIs() {
-            renderNotesGrid();
-        }
+        function renderAllUIs() { renderNotesGrid(); }
 
         function renderNotesGrid() {
             notesGridUI.innerHTML = '';
@@ -610,9 +586,15 @@
                 renderVideoList();
                 modal.classList.add('active');
                 
+                // Aplicar fuente guardada al abrir (Arreglo del Select)
                 const savedSize = localStorage.getItem('yt-pro-fontsize') || '18px';
-                document.getElementById('font-size').value = savedSize;
-                editor.style.fontSize = savedSize;
+                const fontSelect = document.getElementById('font-size');
+                if([...fontSelect.options].some(o => o.value === savedSize)) {
+                    fontSelect.value = savedSize;
+                } else {
+                    fontSelect.value = '18px';
+                }
+                editor.style.fontSize = fontSelect.value;
                 
                 applySyntaxHighlighting();
                 updateStats();
@@ -625,6 +607,7 @@
         function closeNoteModal() {
             triggerMasterSave(true);
             modal.classList.remove('active');
+            modalContent.classList.remove('maximized');
             renderAllUIs();
         }
 
@@ -656,10 +639,13 @@
             }
         });
 
+        // NUEVO SISTEMA DE HIGHLIGHTING (SIN DESTRUIR EL DOM)
         function applySyntaxHighlighting() {
             if (modeSelect.value !== 'editor') return;
             const sel = window.getSelection();
             const hasSelection = sel.rangeCount > 0 && editor.contains(sel.focusNode);
+            
+            // 1. Guardar Caret
             if (hasSelection) {
                 const range = sel.getRangeAt(0);
                 const s = document.createElement('span'); s.id = 'caret-start';
@@ -668,6 +654,7 @@
                 const rStart = range.cloneRange(); rStart.collapse(true); rStart.insertNode(s);
             }
 
+            // 2. Limpiar ghost spans sin romper nada
             editor.querySelectorAll('.ghost-text').forEach(span => {
                 const frag = document.createDocumentFragment();
                 while(span.firstChild) frag.appendChild(span.firstChild);
@@ -675,10 +662,39 @@
             });
             editor.normalize();
 
-            let html = editor.innerHTML;
-            const newHtml = html.replace(/(<[^>]+>)|(\[[\s\S]*?\]|===)/g, (match, tag, special) => tag ? tag : `<span class="ghost-text">${special}</span>`);
-            if (html !== newHtml) editor.innerHTML = newHtml;
+            // 3. Aplicar nuevos ghost spans solo a nodos de texto
+            const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false);
+            const textNodes = [];
+            let node;
+            while(node = walker.nextNode()) {
+                if (node.parentNode.id === 'caret-start' || node.parentNode.id === 'caret-end') continue;
+                textNodes.push(node);
+            }
 
+            textNodes.forEach(textNode => {
+                const text = textNode.nodeValue;
+                const regex = /(\[[\s\S]*?\]|===)/g;
+                if (regex.test(text)) {
+                    const frag = document.createDocumentFragment();
+                    let lastIndex = 0;
+                    text.replace(regex, (match, p1, offset) => {
+                        if (offset > lastIndex) {
+                            frag.appendChild(document.createTextNode(text.substring(lastIndex, offset)));
+                        }
+                        const span = document.createElement('span');
+                        span.className = 'ghost-text';
+                        span.textContent = match;
+                        frag.appendChild(span);
+                        lastIndex = offset + match.length;
+                    });
+                    if (lastIndex < text.length) {
+                        frag.appendChild(document.createTextNode(text.substring(lastIndex)));
+                    }
+                    textNode.parentNode.replaceChild(frag, textNode);
+                }
+            });
+
+            // 4. Restaurar Caret
             if (hasSelection) {
                 const s = document.getElementById('caret-start'), e = document.getElementById('caret-end');
                 if (s && e) {
@@ -699,7 +715,7 @@
             const wordsMatch = cleanText.match(/\S+/g);
             const words = wordsMatch ? wordsMatch.length : 0;
 
-            document.getElementById('word-count').textContent = `${words} palabras`;
+            document.getElementById('word-count').textContent = `${words} palabras narradas`;
             const scriptSeconds = Math.floor((words / currentWPM) * 60) + extraSeconds;
             document.getElementById('script-time').textContent = `Lectura: ${String(Math.floor(scriptSeconds/60)).padStart(2,'0')}:${String(scriptSeconds%60).padStart(2,'0')}`;
 
@@ -754,6 +770,10 @@
         }
         window.deleteVideoObj = (id) => { const n = notes.find(n=>n.id===currentNoteId); if(n){ n.videos=n.videos.filter(v=>v.id!==id); triggerMasterSave(true); renderVideoList(); updateStats(); }};
 
+        document.getElementById('btn-maximize').addEventListener('click', () => {
+            modalContent.classList.toggle('maximized');
+            document.getElementById('btn-maximize').textContent = modalContent.classList.contains('maximized') ? '🗗' : '🗖';
+        });
         document.getElementById('btn-toggle-video').addEventListener('click', () => document.getElementById('video-panel').classList.toggle('active'));
         document.getElementById('btn-new-note').addEventListener('click', () => createNewNote(true));
         
