@@ -53,48 +53,16 @@
         .skel-text { height: 14px; margin-bottom: 12px; width: 100%; }
         .skel-text.short { width: 60%; }
         .skel-title { height: 22px; width: 80%; margin-bottom: 20px; }
-        .skel-card { 
-            padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); 
-            background-color: var(--surface-color); height: 250px; display: flex; flex-direction: column;
-        }
+        .skel-card { padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); background-color: var(--surface-color); height: 250px; display: flex; flex-direction: column; }
         .skel-footer { margin-top: auto; height: 12px; width: 40%; }
-        .skel-sidebar-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; border-bottom: 1px solid var(--border-color); }
-        .skel-icon { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; }
 
         /* --- BOTONES Y CONTROLES --- */
-        button, select, input {
-            background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; font-family: inherit;
-        }
+        button, select, input { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; font-family: inherit; }
         button:hover { filter: brightness(1.2); }
         .btn-primary { background-color: var(--accent-color); color: #fff; border: none; font-weight: bold; padding: 10px 20px; font-size: 1rem; }
         .btn-small { padding: 4px 8px; font-size: 0.85rem; }
         .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); font-weight: bold; padding: 10px 20px; font-size: 1rem; }
         .btn-secondary:hover { background: var(--toolbar-bg); }
-
-        /* --- BARRA LATERAL (SIDEBAR) --- */
-        #sidebar {
-            width: var(--sidebar-width-expanded); background-color: var(--surface-color);
-            border-right: 1px solid var(--border-color); display: flex; flex-direction: column;
-            transition: width 0.3s ease; z-index: 50;
-        }
-        #sidebar.collapsed { width: var(--sidebar-width-collapsed); }
-        
-        .sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; white-space: nowrap; overflow: hidden; }
-        .btn-hamburger { background: transparent; border: none; font-size: 1.5rem; color: var(--text-color); padding: 0; display: flex; justify-content: center; width: 30px; }
-        .sidebar-title { font-weight: bold; font-size: 1.2rem; }
-        
-        .sidebar-notes-list { flex: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; }
-        .sidebar-note-item { padding: 12px 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; border-bottom: 1px solid var(--border-color); overflow: hidden; white-space: nowrap; }
-        .sidebar-note-item:hover { background-color: var(--toolbar-bg); }
-        .note-icon { width: 30px; text-align: center; font-size: 1.2rem; }
-        
-        .sidebar-tools { padding: 10px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; }
-        .btn-side-tool { display: flex; align-items: center; gap: 15px; background: transparent; border: 1px solid var(--border-color); padding: 10px; color: var(--text-color); font-weight: bold; justify-content: flex-start; overflow: hidden; white-space: nowrap; }
-        .btn-side-tool:hover { background: var(--toolbar-bg); }
-
-        #sidebar.collapsed .sidebar-title, #sidebar.collapsed .tool-label, #sidebar.collapsed .sidebar-note-title { opacity: 0; pointer-events: none; display: none; }
-        #sidebar.collapsed .sidebar-note-item, #sidebar.collapsed .btn-side-tool { justify-content: center; padding-left: 0; padding-right: 0; }
 
         /* --- CONTENEDOR PRINCIPAL --- */
         #main-container { flex: 1; display: flex; flex-direction: column; position: relative; overflow-y: auto; width: 100%; }
@@ -141,7 +109,7 @@
                 width: 100% !important; max-width: 100% !important; height: 100% !important;
                 border-radius: 0 !important; border: none !important; transform: translateY(0);
             }
-            #btn-maximize { display: none !important; } 
+            #btn-maximize { display: none !important; }
         }
 
         #settings-modal .modal-content { width: 95%; max-width: 500px; height: auto; max-height: 90vh; border-radius: 12px; border: 1px solid var(--border-color); }
@@ -182,9 +150,7 @@
         /* --- PANELES SECUNDARIOS --- */
         .video-panel { width: 320px; background-color: var(--toolbar-bg); border-left: 1px solid var(--border-color); display: none; flex-direction: column; }
         .video-panel.active { display: flex; }
-        @media (max-width: 768px) {
-            .video-panel { width: 100%; height: 40%; border-left: none; border-top: 1px solid var(--border-color); }
-        }
+        @media (max-width: 768px) { .video-panel { width: 100%; height: 40%; border-left: none; border-top: 1px solid var(--border-color); } }
         
         .video-panel-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold; }
         .video-list { flex: 1; overflow-y: auto; padding: 15px; list-style: none; margin: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -226,20 +192,6 @@
         <h2>📥 Suelta tu archivo aquí</h2>
         <p>Restauraremos tu copia de seguridad al instante.</p>
     </div>
-
-    <!-- BARRA LATERAL -->
-    <aside id="sidebar" class="expanded">
-        <div class="sidebar-header">
-            <button class="btn-hamburger" id="btn-hamburger">☰</button>
-            <span class="sidebar-title">Menú Principal</span>
-        </div>
-        
-        <ul class="sidebar-notes-list" id="sidebar-notes-list">
-            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0;"></div></li>
-            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0; width:60%"></div></li>
-            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0; width:80%"></div></li>
-        </ul>
-    </aside>
 
     <!-- CONTENEDOR PRINCIPAL -->
     <div id="main-container">
@@ -363,7 +315,7 @@
 
         <!-- MODAL CONFIGURACIÓN -->
         <div class="modal-overlay" id="settings-modal">
-            <div class="modal-content" style="height: auto;">
+            <div class="modal-content" style="width: 95%; max-width: 500px; height: auto; max-height: 90vh; border-radius: 12px;">
                 <div class="modal-header">
                     <h2 style="margin:0; font-size: 1.5rem;">⚙️ Configuración</h2>
                     <button class="btn-icon-head" id="btn-close-settings">✕</button>
@@ -422,12 +374,10 @@
         }
 
         // --- REFERENCIAS DEL DOM ---
-        const sidebar = document.getElementById('sidebar');
         const editor = document.getElementById('editor');
         const editorWrapper = document.getElementById('editor-wrapper');
         const noteTitle = document.getElementById('note-title');
         const notesGridUI = document.getElementById('notes-grid');
-        const sidebarListUI = document.getElementById('sidebar-notes-list');
         const syncStatus = document.getElementById('sync-status');
         const modal = document.getElementById('editor-modal');
         const modalContent = document.getElementById('modal-content');
@@ -509,7 +459,6 @@
                 const compressedString = LZString.compressToUTF16(jsonString);
                 
                 await setLocalVault('compressed_notes', compressedString);
-                renderSidebarList(); 
                 
                 syncStatus.textContent = "☁️ Subiendo...";
                 dbRef.set(compressedString)
@@ -603,8 +552,6 @@
         document.getElementById('btn-settings').addEventListener('click', () => settingsModal.classList.add('active'));
         document.getElementById('btn-close-settings').addEventListener('click', () => settingsModal.classList.remove('active'));
 
-        document.getElementById('btn-hamburger').addEventListener('click', () => sidebar.classList.toggle('collapsed'));
-
         modeSelect.addEventListener('change', (e) => {
             if (e.target.value === 'lectura') {
                 modalContent.classList.add('mode-lectura'); editor.setAttribute('contenteditable', 'false');
@@ -613,22 +560,7 @@
             }
         });
 
-        function renderAllUIs() {
-            renderNotesGrid();
-            renderSidebarList();
-        }
-
-        function renderSidebarList() {
-            sidebarListUI.innerHTML = '';
-            const sortedNotes = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
-            sortedNotes.forEach(note => {
-                const li = document.createElement('li');
-                li.className = 'sidebar-note-item';
-                li.onclick = () => openNoteModal(note.id);
-                li.innerHTML = `<div class="note-icon">📝</div><div class="sidebar-note-title">${note.title || 'Sin Título'}</div>`;
-                sidebarListUI.appendChild(li);
-            });
-        }
+        function renderAllUIs() { renderNotesGrid(); }
 
         function renderNotesGrid() {
             notesGridUI.innerHTML = '';
@@ -722,7 +654,7 @@
             }
         });
 
-        // NUEVO SISTEMA DE HIGHLIGHTING (10% OPACIDAD SÓLO EN CORCHETES)
+        // NUEVO SISTEMA DE HIGHLIGHTING (10% OPACIDAD SÓLO EN CORCHETES LITERALES Y ===)
         function applySyntaxHighlighting() {
             if (modeSelect.value !== 'editor') return;
             const sel = window.getSelection();
