@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 YT Script Pro</title>
-	
-	<!-- PWA Manifest & Theme -->
+    <title>YT Script Writer Pro v14.3 - Mobile Optimized</title>
+    
+    <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#121212">
     <link rel="apple-touch-icon" href="./icon-192.png">
@@ -30,10 +30,6 @@
             --toolbar-bg: #2d2d2d; 
             --card-hover: #2a2a2a;
             --success-color: #32ff7e; 
-            
-            /* Variables del Sidebar */
-            --sidebar-width-expanded: 260px;
-            --sidebar-width-collapsed: 65px;
         }
 
         * { box-sizing: border-box; transition: background-color 0.2s, border-color 0.2s; }
@@ -58,13 +54,11 @@
             background-color: var(--surface-color); height: 250px; display: flex; flex-direction: column;
         }
         .skel-footer { margin-top: auto; height: 12px; width: 40%; }
-        .skel-sidebar-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; border-bottom: 1px solid var(--border-color); }
-        .skel-icon { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; }
 
         /* --- BOTONES Y CONTROLES --- */
         button, select, input {
             background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 4px 10px; border-radius: 6px; outline: none; cursor: pointer; font-family: inherit;
+            padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; font-family: inherit;
         }
         button:hover { filter: brightness(1.2); }
         .btn-primary { background-color: var(--accent-color); color: #fff; border: none; font-weight: bold; padding: 10px 20px; font-size: 1rem; }
@@ -72,90 +66,64 @@
         .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); font-weight: bold; padding: 10px 20px; font-size: 1rem; }
         .btn-secondary:hover { background: var(--toolbar-bg); }
 
-        /* --- BARRA LATERAL (SIDEBAR) --- */
-        #sidebar {
-            width: var(--sidebar-width-expanded); background-color: var(--surface-color);
-            border-right: 1px solid var(--border-color); display: flex; flex-direction: column;
-            transition: width 0.3s ease; z-index: 50;
-        }
-        #sidebar.collapsed { width: var(--sidebar-width-collapsed); }
-        
-        .sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; white-space: nowrap; overflow: hidden; }
-        .btn-hamburger { background: transparent; border: none; font-size: 1.5rem; color: var(--text-color); padding: 0; display: flex; justify-content: center; width: 30px; }
-        .sidebar-title { font-weight: bold; font-size: 1.2rem; }
-        
-        .sidebar-notes-list { flex: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; }
-        .sidebar-note-item { padding: 12px 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; border-bottom: 1px solid var(--border-color); overflow: hidden; white-space: nowrap; }
-        .sidebar-note-item:hover { background-color: var(--toolbar-bg); }
-        .note-icon { width: 30px; text-align: center; font-size: 1.2rem; }
-        
-        .sidebar-tools { padding: 10px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; }
-        .btn-side-tool { display: flex; align-items: center; gap: 15px; background: transparent; border: 1px solid var(--border-color); padding: 10px; color: var(--text-color); font-weight: bold; justify-content: flex-start; overflow: hidden; white-space: nowrap; }
-        .btn-side-tool:hover { background: var(--toolbar-bg); }
-
-        .storage-section {
-            padding: 15px; border-top: 1px solid var(--border-color);
-            display: flex; align-items: center; gap: 15px; overflow: hidden; white-space: nowrap;
-            margin-top: auto; 
-        }
-        .storage-icon { font-size: 1.5rem; width: 30px; text-align: center; }
-        .storage-details { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-        .storage-meter { width: 100%; height: 6px; background-color: var(--bg-color); border-radius: 3px; overflow: hidden; }
-        #storage-bar { width: 0%; height: 100%; background-color: var(--accent-color); transition: width 0.3s; }
-        #storage-text { font-size: 0.75rem; color: #aaa; }
-
-        #sidebar.collapsed .sidebar-title, #sidebar.collapsed .storage-details, #sidebar.collapsed .tool-label, #sidebar.collapsed .sidebar-note-title { opacity: 0; pointer-events: none; display: none; }
-        #sidebar.collapsed .storage-section, #sidebar.collapsed .sidebar-note-item, #sidebar.collapsed .btn-side-tool { justify-content: center; padding-left: 0; padding-right: 0; }
-
         /* --- CONTENEDOR PRINCIPAL --- */
-        #main-container { flex: 1; display: flex; flex-direction: column; position: relative; overflow-y: auto; }
+        #main-container { flex: 1; display: flex; flex-direction: column; position: relative; overflow-y: auto; width: 100%; }
 
-        header { background-color: var(--surface-color); padding: 15px 30px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        header { background-color: var(--surface-color); padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
         header h1 { margin: 0; font-size: 1.5rem; }
-        .controls-row { display: flex; gap: 15px; align-items: center; }
+        .controls-row { display: flex; gap: 10px; align-items: center; }
 
-        main { padding: 40px; max-width: 1400px; margin: 0 auto; width: 100%; }
-        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        main { padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
+        .action-buttons { display: flex; gap: 10px; }
         .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
 
         .note-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; height: 250px; display: flex; flex-direction: column; cursor: pointer; position: relative; box-shadow: 0 4px 6px var(--shadow); }
         .note-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px var(--shadow); background-color: var(--card-hover); }
-        .note-card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 30px; }
         .note-card-preview { font-size: 0.95rem; opacity: 0.7; flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; line-height: 1.5; }
         .note-card-footer { margin-top: 15px; font-size: 0.8rem; opacity: 0.5; }
         
         .btn-delete-card { position: absolute; top: 15px; right: 15px; background: rgba(255, 77, 77, 0.2); color: #ff4d4d; border: none; border-radius: 50%; width: 30px; height: 30px; opacity: 0; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;}
         .note-card:hover .btn-delete-card { opacity: 1; }
+        @media (max-width: 768px) { .btn-delete-card { opacity: 1; } } /* Siempre visible en móviles */
 
         /* --- MODALES (EDITOR Y CONFIGURACIÓN) --- */
         .modal-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center;
             z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
+        /* EDITOR 100% PANTALLA */
         .modal-content {
-            background-color: var(--bg-color); width: 95%; max-width: 900px; height: 90%;
-            border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color); overflow: hidden; transform: translateY(20px); transition: transform 0.3s ease, width 0.3s, max-width 0.3s, height 0.3s;
+            background-color: var(--bg-color); width: 100vw; height: 100vh;
+            display: flex; flex-direction: column; overflow: hidden;
+            border: none; border-radius: 0;
         }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        .modal-content.maximized { width: 100% !important; max-width: 100% !important; height: 100% !important; border-radius: 0 !important; border: none !important; }
 
-        .modal-header { padding: 20px 30px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; }
-        .title-input { width: 50%; font-size: 1.8rem; font-weight: bold; background: transparent; border: none; color: var(--text-color); outline: none; }
-        .header-controls { display: flex; align-items: center; gap: 15px; }
+        /* CONFIG MODAL */
+        #settings-modal .modal-content {
+            width: 95%; max-width: 500px; height: auto; max-height: 90vh;
+            border-radius: 12px; border: 1px solid var(--border-color);
+        }
 
-        .btn-icon-head { background: transparent; border: 1px solid var(--border-color); font-size: 1.2rem; color: var(--text-color); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .title-input { flex: 1; font-size: 1.5rem; font-weight: bold; background: transparent; border: none; color: var(--text-color); outline: none; min-width: 0; }
+        .header-controls { display: flex; align-items: center; gap: 10px; }
+
+        .btn-icon-head { background: transparent; border: 1px solid var(--border-color); font-size: 1.2rem; color: var(--text-color); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;}
         .btn-icon-head:hover { background-color: var(--toolbar-bg); }
 
-        /* --- CUERPO DEL MODAL (EDITOR CLÁSICO RESTAURADO) --- */
-        .modal-body { display: flex; flex: 1; overflow: hidden; }
+        /* --- CUERPO DEL MODAL (EDITOR CLÁSICO) --- */
+        .modal-body { display: flex; flex: 1; overflow: hidden; flex-direction: row; }
+        @media (max-width: 768px) { .modal-body { flex-direction: column; } }
+
         .main-editor-area { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
         
-        .editor-wrapper { flex: 1; overflow-y: auto; padding: 30px; display: flex; justify-content: center; cursor: text; }
-        .editor { width: 100%; max-width: 750px; min-height: 100%; outline: none; line-height: 1.6; font-size: 18px; padding-bottom: 50px; cursor: text; color: var(--text-color); }
+        .editor-wrapper { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; cursor: text; }
+        .editor { width: 100%; max-width: 800px; min-height: 100%; outline: none; line-height: 1.6; font-size: 18px; padding-bottom: 50px; cursor: text; color: var(--text-color); }
         .editor:empty:before { content: attr(data-placeholder); opacity: 0.4; }
         .editor * { color: var(--text-color) !important; background-color: transparent !important; }
         .editor > div, .editor > p { margin-bottom: 0.8em; }
@@ -170,14 +138,25 @@
         /* --- PANELES SECUNDARIOS --- */
         .video-panel { width: 320px; background-color: var(--toolbar-bg); border-left: 1px solid var(--border-color); display: none; flex-direction: column; }
         .video-panel.active { display: flex; }
+        @media (max-width: 768px) {
+            .video-panel { width: 100%; height: 40%; border-left: none; border-top: 1px solid var(--border-color); }
+        }
+        
         .video-panel-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold; }
         .video-list { flex: 1; overflow-y: auto; padding: 15px; list-style: none; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-        .video-item { background-color: var(--surface-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; }
+        .video-item { background-color: var(--surface-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;}
+        .video-info { display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
+        .video-name { font-size: 0.9rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .video-dur { font-size: 0.8rem; opacity: 0.7; color: var(--accent-color); }
         .video-add-form { padding: 15px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; background-color: var(--bg-color); }
+        .time-inputs { display: flex; gap: 10px; align-items: center; }
+        .time-inputs input[type="number"] { width: 60px; text-align: center; }
 
-        .toolbar { display: flex; padding: 4px 16px; background-color: var(--toolbar-bg); border-top: 1px solid var(--border-color); flex-wrap: wrap; align-items: center; }
-        .modal-footer { background-color: var(--surface-color); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); }
-        .time-badge { background-color: var(--bg-color); padding: 6px 15px; border-radius: 20px; border: 1px solid var(--border-color); font-weight: bold; }
+        .toolbar { display: flex; padding: 8px 16px; background-color: var(--toolbar-bg); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); align-items: center; gap: 5px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .toolbar::-webkit-scrollbar { display: none; }
+        
+        .modal-footer { background-color: var(--surface-color); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px; }
+        .time-badge { background-color: var(--bg-color); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-color); font-weight: bold; font-size: 0.85rem; white-space: nowrap;}
         .time-badge.accent { color: var(--accent-color); }
         .time-badge.selection-badge { border-style: dashed; border-color: var(--accent-color); }
 
@@ -191,8 +170,8 @@
             backdrop-filter: blur(5px);
         }
         #drag-overlay.active { display: flex; }
-        #drag-overlay h2 { font-size: 3rem; margin: 0; }
-        #drag-overlay p { font-size: 1.5rem; opacity: 0.8; }
+        #drag-overlay h2 { font-size: 2.5rem; margin: 0; text-align: center; }
+        #drag-overlay p { font-size: 1.2rem; opacity: 0.8; text-align: center; }
         
     </style>
 </head>
@@ -203,34 +182,6 @@
         <h2>📥 Suelta tu archivo aquí</h2>
         <p>Restauraremos tu copia de seguridad al instante.</p>
     </div>
-
-    <!-- BARRA LATERAL -->
-    <aside id="sidebar" class="expanded">
-        <div class="sidebar-header">
-            <button class="btn-hamburger" id="btn-hamburger">☰</button>
-            <span class="sidebar-title">Menú Principal</span>
-        </div>
-        
-        <ul class="sidebar-notes-list" id="sidebar-notes-list">
-            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0;"></div></li>
-            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0; width:60%"></div></li>
-            <li class="skel-sidebar-item"><div class="skeleton skel-icon"></div><div class="skeleton skel-text" style="margin:0; width:80%"></div></li>
-        </ul>
-
-        <div class="sidebar-tools">
-            <button id="btn-settings" class="btn-side-tool" title="Configuración">
-                <span>⚙️</span> <span class="tool-label">Configuración</span>
-            </button>
-        </div>
-
-        <div class="storage-section" title="IndexedDB Storage">
-            <div class="storage-icon">📦</div>
-            <div class="storage-details">
-                <div class="storage-meter"><div id="storage-bar"></div></div>
-                <span id="storage-text">Calculando...</span>
-            </div>
-        </div>
-    </aside>
 
     <!-- CONTENEDOR PRINCIPAL -->
     <div id="main-container">
@@ -248,10 +199,14 @@
         <main>
             <div class="header-actions">
                 <h2>Todos mis Guiones</h2>
-                <button id="btn-new-note" class="btn-primary">+ Nuevo Guion</button>
+                <div class="action-buttons">
+                    <button id="btn-settings" class="btn-secondary" title="Configuración">⚙️</button>
+                    <button id="btn-new-note" class="btn-primary">+ Nuevo Guion</button>
+                </div>
             </div>
             
             <div class="notes-grid" id="notes-grid">
+                <!-- SKELETON EN LA CUADRÍCULA -->
                 <div class="skel-card">
                     <div class="skeleton skel-title"></div>
                     <div class="skeleton skel-text"></div>
@@ -275,12 +230,11 @@
                 <div class="modal-header">
                     <input type="text" id="note-title" class="title-input" placeholder="Título del guion...">
                     <div class="header-controls">
-                        <button id="btn-toggle-video" class="btn-primary btn-small" style="background-color: var(--toolbar-bg); border: 1px solid var(--border-color);">📹 Videos</button>
+                        <button id="btn-toggle-video" class="btn-primary btn-small" style="background-color: var(--toolbar-bg); border: 1px solid var(--border-color);" title="Videos">📹</button>
                         <select id="mode-select">
                             <option value="editor">Edición</option>
                             <option value="lectura">Lectura</option>
                         </select>
-                        <button class="btn-icon-head" id="btn-maximize" title="Pantalla completa">🗖</button>
                         <button class="btn-icon-head" id="btn-close-modal" title="Cerrar y guardar">✕</button>
                     </div>
                 </div>
@@ -326,13 +280,13 @@
                 </div>
 
                 <div class="modal-footer" id="modal-footer">
-                    <div style="display: flex; gap: 20px; font-size: 0.9rem; align-items: center;">
-                        <span id="word-count">0 palabras en total</span>
+                    <div style="display: flex; gap: 15px; font-size: 0.85rem; align-items: center; flex-wrap: wrap;">
+                        <span id="word-count">0 palabras</span>
                         <span id="sync-status" style="color: var(--accent-color); font-weight: bold;"></span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                         <div class="time-badge" id="script-time">Lectura: 00:00</div>
-                        <div class="time-badge selection-badge" id="selected-time" style="display: none;">Selección: 00:00</div>
+                        <div class="time-badge selection-badge" id="selected-time" style="display: none;">Sel: 00:00</div>
                         <div class="time-badge" id="clips-time">Clips: 00:00</div>
                         <div class="time-badge accent" id="total-time">Total: 00:00</div>
                     </div>
@@ -342,20 +296,28 @@
 
         <!-- MODAL CONFIGURACIÓN -->
         <div class="modal-overlay" id="settings-modal">
-            <div class="modal-content" style="max-width: 500px; height: auto;">
+            <div class="modal-content" style="height: auto;">
                 <div class="modal-header">
                     <h2 style="margin:0; font-size: 1.5rem;">⚙️ Configuración</h2>
                     <button class="btn-icon-head" id="btn-close-settings">✕</button>
                 </div>
-                <div class="modal-body" style="padding: 30px; flex-direction: column; gap: 20px;">
+                <div class="modal-body" style="padding: 20px; flex-direction: column; gap: 20px; overflow-y: auto;">
                     <div>
-                        <h3 style="margin-top:0; margin-bottom:10px;">Copias de Seguridad (Backups)</h3>
-                        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom:20px;">Puedes arrastrar y soltar un archivo .json en cualquier parte de la pantalla, o utilizar los botones de abajo.</p>
-                        <div style="display: flex; gap: 15px;">
+                        <h3 style="margin-top:0; margin-bottom:10px;">Copias de Seguridad</h3>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom:20px;">Puedes arrastrar y soltar un archivo .json en la pantalla, o usar estos botones.</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <input type="file" id="import-file" style="display: none;" accept=".json">
-                            <button id="btn-import-settings" class="btn-secondary" style="flex:1;">📥 Cargar Backup</button>
-                            <button id="btn-export-settings" class="btn-primary" style="flex:1;">📤 Guardar Backup</button>
+                            <button id="btn-import-settings" class="btn-secondary" style="flex:1;">📥 Cargar</button>
+                            <button id="btn-export-settings" class="btn-primary" style="flex:1;">📤 Guardar</button>
                         </div>
+                    </div>
+                    
+                    <div class="storage-section" style="margin-top: 10px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                        <h4 style="margin-top: 0; margin-bottom: 10px;">📦 Almacenamiento Local (IndexedDB)</h4>
+                        <div class="storage-meter" style="width: 100%; height: 8px; background-color: var(--bg-color); border-radius: 4px; margin-bottom: 5px; overflow: hidden;">
+                            <div id="storage-bar" style="width: 0%; height: 100%; background-color: var(--accent-color); transition: width 0.3s;"></div>
+                        </div>
+                        <span id="storage-text" style="font-size: 0.85rem; color: #aaa;">Calculando...</span>
                     </div>
                 </div>
             </div>
@@ -401,12 +363,10 @@
         }
 
         // --- REFERENCIAS DEL DOM ---
-        const sidebar = document.getElementById('sidebar');
         const editor = document.getElementById('editor');
         const editorWrapper = document.getElementById('editor-wrapper');
         const noteTitle = document.getElementById('note-title');
         const notesGridUI = document.getElementById('notes-grid');
-        const sidebarListUI = document.getElementById('sidebar-notes-list');
         const syncStatus = document.getElementById('sync-status');
         const storageText = document.getElementById('storage-text');
         const storageBar = document.getElementById('storage-bar');
@@ -433,7 +393,6 @@
                 renderAllUIs();
                 updateStorageMeter(localData);
             } else {
-                if (notes.length === 0) createNewNote(false);
                 renderAllUIs();
             }
 
@@ -455,7 +414,6 @@
         }
         bootApp();
 
-        // Traductor automático: Si el backup tenía "sections", las une en una sola hoja.
         function verifyAndMigrate() {
             let changed = false;
             notes.forEach(note => {
@@ -490,7 +448,6 @@
                 
                 await setLocalVault('compressed_notes', compressedString);
                 updateStorageMeter(compressedString);
-                renderSidebarList(); 
                 
                 syncStatus.textContent = "☁️ Subiendo...";
                 dbRef.set(compressedString)
@@ -507,19 +464,13 @@
             const kb = (bytes / 1024).toFixed(2);
             const MAX_KB = 51200; // 50MB Visual Cap
             const percentage = Math.min((bytes / 1024 / MAX_KB) * 100, 100);
-            storageText.textContent = `${kb} KB / 50 MB visual`;
+            storageText.textContent = `${kb} KB / 50 MB (Visual)`;
             storageBar.style.width = `${percentage}%`;
         }
 
         // --- FUNCIONES DE NUEVA NOTA Y ELIMINACIÓN ---
         function createNewNote(openModal = true) {
-            const newNote = { 
-                id: Date.now().toString(), 
-                title: '', 
-                content: '', 
-                updatedAt: Date.now(),
-                videos: [] 
-            };
+            const newNote = { id: Date.now().toString(), title: '', content: '', updatedAt: Date.now(), videos: [] };
             notes.push(newNote);
             triggerMasterSave(true);
             renderAllUIs();
@@ -573,20 +524,11 @@
                     if (data.notes && Array.isArray(data.notes)) {
                         notes = data.notes;
                         verifyAndMigrate();
-                        
-                        // 1. Comprimir
                         const compressedString = LZString.compressToUTF16(JSON.stringify(notes));
-                        
-                        // 2. Guardar localmente
                         await setLocalVault('compressed_notes', compressedString);
-                        
-                        // 3. Mostrar estado
                         if(syncStatus) syncStatus.textContent = "☁️ Subiendo backup...";
-                        
-                        // 4. ESPERAR a que Firebase termine de guardar
                         await dbRef.set(compressedString); 
                     }
-                    
                     if (data.pace) {
                         currentWPM = data.pace;
                         localStorage.setItem('yt-pro-pace', data.pace);
@@ -596,42 +538,26 @@
                         localStorage.setItem('yt-pro-fontsize', data.fontsize);
                         document.getElementById('font-size').value = data.fontsize;
                     }
-                    
-                    // 5. Actualizar la interfaz
                     renderAllUIs();
-                    updateStats(); // <--- EL ERROR ESTABA AQUÍ (antes decía updateGlobalStats)
-                    
-                    if(syncStatus) {
-                        syncStatus.textContent = "☁️ Sincronizado";
-                        setTimeout(() => syncStatus.textContent = "", 3000);
-                    }
-                    
-                    // Cerrar la ventana de configuración automáticamente
+                    updateStats();
+                    if(syncStatus) { syncStatus.textContent = "☁️ Sincronizado"; setTimeout(() => syncStatus.textContent = "", 3000); }
                     document.getElementById('settings-modal').classList.remove('active');
-                    
                     alert('✅ Backup restaurado y sincronizado con éxito.');
-                    
-                } catch (err) { 
-                    alert('❌ Error: El archivo no es válido o está dañado.'); 
-                    console.error(err);
-                }
+                } catch (err) { alert('❌ Error: El archivo no es válido o está dañado.'); console.error(err); }
                 importFileInput.value = ''; 
             };
             reader.readAsText(file);
         }
-		
+
         // --- INTERFAZ UI ---
-        document.getElementById('btn-hamburger').addEventListener('click', () => sidebar.classList.toggle('collapsed'));
-        
-        // Clic fuera del modal cierra la nota
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeNoteModal(); });
+        // Clic fuera del modal cierra las ventanas
+        modal.addEventListener('mousedown', (e) => { if (e.target === modal) closeNoteModal(); });
+        settingsModal.addEventListener('mousedown', (e) => { if(e.target === settingsModal) settingsModal.classList.remove('active'); });
         
         // Ventana de configuración
         document.getElementById('btn-settings').addEventListener('click', () => settingsModal.classList.add('active'));
         document.getElementById('btn-close-settings').addEventListener('click', () => settingsModal.classList.remove('active'));
-        settingsModal.addEventListener('click', (e) => { if(e.target === settingsModal) settingsModal.classList.remove('active'); });
 
-        // EVENTO RESTAURADO: Cambio a Modo Lectura/Edición
         modeSelect.addEventListener('change', (e) => {
             if (e.target.value === 'lectura') {
                 modalContent.classList.add('mode-lectura');
@@ -644,19 +570,6 @@
 
         function renderAllUIs() {
             renderNotesGrid();
-            renderSidebarList();
-        }
-
-        function renderSidebarList() {
-            sidebarListUI.innerHTML = '';
-            const sortedNotes = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
-            sortedNotes.forEach(note => {
-                const li = document.createElement('li');
-                li.className = 'sidebar-note-item';
-                li.onclick = () => openNoteModal(note.id);
-                li.innerHTML = `<div class="note-icon">📝</div><div class="sidebar-note-title">${note.title || 'Sin Título'}</div>`;
-                sidebarListUI.appendChild(li);
-            });
         }
 
         function renderNotesGrid() {
@@ -666,7 +579,6 @@
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = note.content;
                 const previewText = tempDiv.innerText || 'Sin contenido...';
-                
                 const dateObj = new Date(note.updatedAt);
                 const dateString = dateObj.toLocaleDateString('es-MX', { timeZone: 'America/Monterrey' }) + ' ' + dateObj.toLocaleTimeString('es-MX', { timeZone: 'America/Monterrey', hour:'2-digit', minute:'2-digit' });
 
@@ -691,7 +603,6 @@
                 editor.innerHTML = note.content || '';
                 if (!note.videos) note.videos = [];
                 
-                // Asegurar que abra en modo edición por defecto
                 modeSelect.value = 'editor';
                 modalContent.classList.remove('mode-lectura');
                 editor.setAttribute('contenteditable', 'true');
@@ -714,7 +625,6 @@
         function closeNoteModal() {
             triggerMasterSave(true);
             modal.classList.remove('active');
-            modalContent.classList.remove('maximized');
             renderAllUIs();
         }
 
@@ -789,7 +699,7 @@
             const wordsMatch = cleanText.match(/\S+/g);
             const words = wordsMatch ? wordsMatch.length : 0;
 
-            document.getElementById('word-count').textContent = `${words} palabras narradas`;
+            document.getElementById('word-count').textContent = `${words} palabras`;
             const scriptSeconds = Math.floor((words / currentWPM) * 60) + extraSeconds;
             document.getElementById('script-time').textContent = `Lectura: ${String(Math.floor(scriptSeconds/60)).padStart(2,'0')}:${String(scriptSeconds%60).padStart(2,'0')}`;
 
@@ -818,7 +728,7 @@
             const words = wordsMatch ? wordsMatch.length : 0;
 
             const selectedSeconds = Math.floor((words / currentWPM) * 60) + extraSeconds;
-            document.getElementById('selected-time').textContent = `Selección: ${String(Math.floor(selectedSeconds/60)).padStart(2,'0')}:${String(selectedSeconds%60).padStart(2,'0')}`;
+            document.getElementById('selected-time').textContent = `Sel: ${String(Math.floor(selectedSeconds/60)).padStart(2,'0')}:${String(selectedSeconds%60).padStart(2,'0')}`;
             document.getElementById('selected-time').style.display = 'block';
         });
 
@@ -838,16 +748,12 @@
             if (!note || !note.videos || note.videos.length === 0) return;
             note.videos.forEach(v => {
                 const li = document.createElement('li'); li.className = 'video-item';
-                li.innerHTML = `<div><b>${v.name}</b> <span style="color:var(--accent-color);font-size:0.8em">⏱ ${String(Math.floor(v.durationSecs/60)).padStart(2,'0')}:${String(v.durationSecs%60).padStart(2,'0')}</span></div><button class="video-del" onclick="deleteVideoObj('${v.id}')">✕</button>`;
+                li.innerHTML = `<div class="video-info"><span class="video-name">${v.name}</span> <span class="video-dur">⏱ ${String(Math.floor(v.durationSecs/60)).padStart(2,'0')}:${String(v.durationSecs%60).padStart(2,'0')}</span></div><button class="video-del" onclick="deleteVideoObj('${v.id}')">✕</button>`;
                 ul.appendChild(li);
             });
         }
         window.deleteVideoObj = (id) => { const n = notes.find(n=>n.id===currentNoteId); if(n){ n.videos=n.videos.filter(v=>v.id!==id); triggerMasterSave(true); renderVideoList(); updateStats(); }};
 
-        document.getElementById('btn-maximize').addEventListener('click', () => {
-            modalContent.classList.toggle('maximized');
-            document.getElementById('btn-maximize').textContent = modalContent.classList.contains('maximized') ? '🗗' : '🗖';
-        });
         document.getElementById('btn-toggle-video').addEventListener('click', () => document.getElementById('video-panel').classList.toggle('active'));
         document.getElementById('btn-new-note').addEventListener('click', () => createNewNote(true));
         
@@ -877,21 +783,15 @@
         document.getElementById('pace-select').addEventListener('change', (e) => {
             currentWPM = parseInt(e.target.value); localStorage.setItem('yt-pro-pace', currentWPM); updateStats();
         });
-		
-		
-		// --- 5. REGISTRO DEL SERVICE WORKER (Para PWA) ---
+        
+        // --- 5. REGISTRO DEL SERVICE WORKER (Para PWA) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado con éxito con el scope: ', registration.scope);
-                    })
-                    .catch(err => {
-                        console.log('El registro del ServiceWorker falló: ', err);
-                    });
+                    .then(registration => { console.log('ServiceWorker registrado con éxito con el scope: ', registration.scope); })
+                    .catch(err => { console.log('El registro del ServiceWorker falló: ', err); });
             });
         }
-		
     </script>
 </body>
 </html>
