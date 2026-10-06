@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v15 - YouTube Edition & Progress Tracker</title>
+    <title>YT Script Writer Pro v16.1 - Custom Channels Fix</title>
     
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="./manifest.json">
@@ -23,8 +23,8 @@
             --bg-color: #121212; 
             --surface-color: #1e1e1e; 
             --text-color: #e0e0e0;
-            --accent-color: #ff0000; /* Rojo YouTube para la barra de progreso */
-            --highlight-color: #32ff7e; /* Verde para el marcatextos */
+            --accent-color: #ff0000;
+            --highlight-color: #32ff7e;
             --border-color: #333333; 
             --font-main: 'Segoe UI', system-ui, sans-serif;
             --shadow: rgba(0,0,0,0.5); 
@@ -44,7 +44,6 @@
         .skeleton { animation: skeleton-glow 1.5s ease-in-out infinite; border-radius: 4px; }
         .skel-text { height: 14px; margin-bottom: 8px; width: 100%; }
         .skel-text.short { width: 60%; }
-        
         .skel-card { background-color: transparent; border: none; display: flex; flex-direction: column; gap: 10px; }
         .skel-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 12px; }
 
@@ -56,6 +55,22 @@
         .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); font-weight: bold; padding: 10px 20px; font-size: 1rem; }
         .btn-secondary:hover { background: var(--toolbar-bg); }
 
+        /* --- ESTILOS DE CANALES Y AVATARES --- */
+        .channel-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; vertical-align: middle; flex-shrink: 0; }
+        .channel-avatar-large { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .channel-item { display: flex; align-items: center; justify-content: space-between; background: var(--toolbar-bg); padding: 8px 12px; border-radius: 6px; }
+        .channel-info { display: flex; align-items: center; gap: 10px; }
+
+        /* Custom Select para Avatares */
+        .custom-select { position: relative; font-size: 0.85rem; user-select: none; }
+        .select-selected { background: var(--toolbar-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 140px;}
+        .select-selected:after { content: "▼"; font-size: 0.6rem; margin-left: auto; }
+        .select-items { position: absolute; background-color: var(--toolbar-bg); top: 100%; left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 6px; margin-top: 4px; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 6px var(--shadow); }
+        .select-items div { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); }
+        .select-items div:hover { background-color: var(--card-hover); }
+        .select-hide { display: none; }
+        .channel-avatar-small { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+
         /* --- CONTENEDOR PRINCIPAL --- */
         #main-container { flex: 1; display: flex; flex-direction: column; position: relative; overflow-y: auto; width: 100%; }
 
@@ -64,7 +79,7 @@
         .controls-row { display: flex; gap: 10px; align-items: center; }
 
         main { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
-        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 15px;}
         .action-buttons { display: flex; gap: 10px; }
         .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px 15px; }
 
@@ -76,14 +91,14 @@
         .thumbnail-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .thumbnail-placeholder { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 3rem; opacity: 0.2; }
         
-        .duration-badge { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.85); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; z-index: 2; letter-spacing: 0.5px;}
+        .duration-badge { position: absolute; bottom: 10px; right: 6px; background-color: rgba(0, 0, 0, 0.85); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; z-index: 2; letter-spacing: 0.5px;}
         
-        .progress-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background-color: rgba(255,255,255,0.2); z-index: 2; }
+        .progress-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background-color: rgba(255,255,255,0.2); z-index: 2; }
         .progress-bar-fill { height: 100%; background-color: var(--accent-color); transition: width 0.3s; }
         
         .note-info { display: flex; flex-direction: column; gap: 4px; padding: 0 5px;}
         .note-card-title { font-size: 1.1rem; font-weight: bold; color: var(--text-color); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
-        .note-card-footer { font-size: 0.85rem; color: #aaa; display: flex; gap: 8px; align-items: center;}
+        .note-card-footer { font-size: 0.85rem; color: #aaa; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;}
         
         .btn-delete-card { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: #ff4d4d; border: none; border-radius: 50%; width: 30px; height: 30px; opacity: 0; transition: opacity 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center; z-index: 10;}
         .note-card:hover .btn-delete-card { opacity: 1; }
@@ -117,7 +132,7 @@
         
         .header-inputs { display: flex; flex: 1; gap: 10px; min-width: 250px;}
         .title-input { flex: 2; font-size: 1.4rem; font-weight: bold; background: transparent; border: none; color: var(--text-color); outline: none; min-width: 100px; }
-        .thumbnail-input { flex: 1; font-size: 0.85rem; background: var(--toolbar-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; min-width: 100px; }
+        .thumbnail-input { flex: 1; font-size: 0.85rem; background: var(--toolbar-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; min-width: 80px; }
 
         .header-controls { display: flex; align-items: center; gap: 10px; }
         .btn-icon-head { background: transparent; border: 1px solid var(--border-color); font-size: 1.2rem; color: var(--text-color); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;}
@@ -132,7 +147,7 @@
         .editor-wrapper { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; cursor: text; }
         .editor { width: 100%; max-width: 800px; min-height: 100%; outline: none; line-height: 1.6; font-size: 18px; padding-bottom: 50px; cursor: text; color: var(--text-color); }
         .editor:empty:before { content: attr(data-placeholder); opacity: 0.4; }
-        .editor * { color: var(--text-color); } /* Removemos !important para permitir la pintura verde */
+        .editor * { color: var(--text-color); } 
         .editor > div, .editor > p { margin-bottom: 0.8em; }
         .editor h1 { font-size: 1.5em; margin-top: 20px; margin-bottom: 10px; color: var(--accent-color) !important; }
         .editor h2 { font-size: 1.25em; margin-top: 15px; margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
@@ -140,16 +155,15 @@
         .editor u { text-decoration-color: var(--accent-color); text-decoration-thickness: 2px; }
         .editor font[face="Consolas"] { font-family: 'Consolas', monospace; background-color: var(--surface-color); padding: 2px 6px; border-radius: 4px; }
 
-        /* OPACIDAD AL 10% SÓLO PARA CORCHETES Y PAUSAS */
+        /* OPACIDAD AL 10% SÓLO PARA CORCHETES LITERALES Y PAUSAS */
         .editor span.ghost-text { opacity: 0.1 !important; transition: opacity 0.2s; font-weight: normal; font-style: normal; }
         .editor span.ghost-text:hover { opacity: 0.8 !important; }
 
         /* EL MARCADOR (INVISIBLE AL TOCAR EL OJO) */
         .editor.hide-highlights [style*="background-color: rgb(50, 255, 126)"],
         .editor.hide-highlights [style*="background-color: #32ff7e"] { background-color: transparent !important; color: var(--text-color) !important; }
-        
         .editor [style*="background-color: rgb(50, 255, 126)"],
-        .editor [style*="background-color: #32ff7e"] { color: #000 !important; } /* Texto negro sobre fondo verde para legibilidad */
+        .editor [style*="background-color: #32ff7e"] { color: #000 !important; }
 
         /* --- PANELES SECUNDARIOS --- */
         .video-panel { width: 320px; background-color: var(--toolbar-bg); border-left: 1px solid var(--border-color); display: none; flex-direction: column; }
@@ -171,8 +185,6 @@
         
         .modal-footer { background-color: var(--surface-color); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px; }
         .time-badge { background-color: var(--bg-color); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-color); font-weight: bold; font-size: 0.85rem; white-space: nowrap;}
-        
-        /* El Total ahora es gris para no opacar el rojo/verde */
         .time-badge.selection-badge { border-style: dashed; border-color: var(--highlight-color); color: var(--highlight-color); }
 
         .mode-lectura .toolbar, .mode-lectura .modal-footer, .mode-lectura .video-panel { display: none !important; }
@@ -211,7 +223,7 @@
             </div>
         </header>
 
-        <main>
+        <main style="padding-top: 4px;">
             <div class="header-actions">
                 <h2>Mis Videos</h2>
                 <div class="action-buttons">
@@ -243,6 +255,11 @@
                     <div class="header-inputs">
                         <input type="text" id="note-title" class="title-input" placeholder="Título del guion...">
                         <input type="url" id="note-thumbnail" class="thumbnail-input" placeholder="URL de la miniatura...">
+                        <!-- CUSTOM SELECTOR DE CANAL -->
+                        <div class="custom-select" id="custom-channel-select" style="flex: 0.5; min-width: 140px;">
+                            <div class="select-selected" id="channel-selected"></div>
+                            <div class="select-items select-hide" id="channel-options"></div>
+                        </div>
                     </div>
                     <div class="header-controls">
                         <button id="btn-toggle-video" class="btn-primary btn-small" style="background-color: var(--toolbar-bg); border: 1px solid var(--border-color);" title="Videos">📹</button>
@@ -271,7 +288,6 @@
                             <button onmousedown="event.preventDefault(); format('formatBlock', 'H3')" title="Título 3">H3</button>
                             <span style="border-right: 1px solid var(--border-color); height: 20px; margin: 0 5px;"></span>
                             
-                            <!-- HERRAMIENTAS DE YOUTUBER (Limpiar y Marcar) -->
                             <button onmousedown="event.preventDefault(); clearFormatting()" title="Quitar formatos (Texto Normal)">Aa</button>
                             <button onmousedown="event.preventDefault(); format('fontName', 'Consolas')" title="Código">&lt;/&gt;</button>
                             <span style="border-right: 1px solid var(--border-color); height: 20px; margin: 0 5px;"></span>
@@ -315,7 +331,7 @@
                         <div class="time-badge" id="script-time">Lectura: 00:00</div>
                         <div class="time-badge selection-badge" id="selected-time" style="display: none;">Sel: 00:00</div>
                         <div class="time-badge" id="clips-time">Clips: 00:00</div>
-                        <div class="time-badge" id="total-time">Total: 00:00</div>
+                        <div class="time-badge accent" id="total-time">Total: 00:00</div>
                     </div>
                 </div>
             </div>
@@ -329,15 +345,29 @@
                     <button class="btn-icon-head" id="btn-close-settings">✕</button>
                 </div>
                 <div class="modal-body" style="padding: 20px; flex-direction: column; gap: 20px; overflow-y: auto;">
+                    
+                    <!-- SECCIÓN DE CANALES -->
                     <div>
+                        <h3 style="margin-top:0; margin-bottom:10px;">Mis Canales de YouTube</h3>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom:15px;">Añade tus canales para etiquetar tus videos y organizarlos mejor.</p>
+                        <div id="channels-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;"></div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <input type="text" id="new-channel-name" placeholder="Nombre del canal" style="flex: 1; min-width: 120px;">
+                            <input type="url" id="new-channel-avatar" placeholder="URL del avatar" style="flex: 1; min-width: 120px;">
+                            <button id="btn-add-channel" class="btn-primary">Añadir</button>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
                         <h3 style="margin-top:0; margin-bottom:10px;">Copias de Seguridad</h3>
                         <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom:20px;">Puedes arrastrar y soltar un archivo .json en la pantalla, o usar estos botones.</p>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <input type="file" id="import-file" style="display: none;" accept=".json">
-                            <button id="btn-import-settings" class="btn-secondary" style="flex:1;">📥 Cargar</button>
-                            <button id="btn-export-settings" class="btn-primary" style="flex:1;">📤 Guardar</button>
+                            <button id="btn-import-settings" class="btn-secondary" style="flex:1;">📥 Cargar Backup</button>
+                            <button id="btn-export-settings" class="btn-primary" style="flex:1;">📤 Guardar Backup</button>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -395,19 +425,129 @@
         const dragOverlay = document.getElementById('drag-overlay');
         const importFileInput = document.getElementById('import-file');
         
+        // Elementos de Canales
+        const customChannelSelect = document.getElementById('custom-channel-select');
+        const channelSelectedUI = document.getElementById('channel-selected');
+        const channelOptionsUI = document.getElementById('channel-options');
+        const channelsListUI = document.getElementById('channels-list');
+        const newChannelName = document.getElementById('new-channel-name');
+        const newChannelAvatar = document.getElementById('new-channel-avatar');
+
         let notes = [];
         let currentNoteId = null;
         let currentWPM = parseInt(localStorage.getItem('yt-pro-pace')) || 145;
         let autoSaveTimer;
         let lastEditorState = "";
 
+        // --- SISTEMA DE CANALES MULTIPLES ---
+        let channels = JSON.parse(localStorage.getItem('yt-pro-channels')) || [];
+        
+        // ELIMINADOR ABSOLUTO DEL "Mi Canal" GENÉRICO
+        channels = channels.filter(c => c.id !== 'ch_default' && c.id !== 'default');
+
+        function saveChannels() {
+            localStorage.setItem('yt-pro-channels', JSON.stringify(channels));
+            renderChannelsSettingsUI();
+            renderNotesGrid();
+        }
+
+        function renderChannelsSettingsUI() {
+            channelsListUI.innerHTML = '';
+            channels.forEach(ch => {
+                const div = document.createElement('div');
+                div.className = 'channel-item';
+                div.innerHTML = `
+                    <div class="channel-info">
+                        <img src="${ch.avatar}" class="channel-avatar-large" alt="Avatar">
+                        <span>${ch.name}</span>
+                    </div>
+                    <button class="btn-small" style="color:#ff4d4d; border:1px solid #ff4d4d;" onclick="deleteChannel('${ch.id}')">✕</button>
+                `;
+                channelsListUI.appendChild(div);
+            });
+
+            // Render opciones para el menú desplegable en el editor
+            channelOptionsUI.innerHTML = '';
+            channels.forEach(ch => {
+                const opt = document.createElement('div');
+                opt.innerHTML = `<img src="${ch.avatar}" class="channel-avatar-small"> <span>${ch.name}</span>`;
+                opt.addEventListener('click', () => {
+                    const note = notes.find(n => n.id === currentNoteId);
+                    if(note) {
+                        note.channelId = ch.id;
+                        updateSelectedChannelUI(ch);
+                        triggerMasterSave();
+                    }
+                    channelOptionsUI.classList.add('select-hide');
+                });
+                channelOptionsUI.appendChild(opt);
+            });
+        }
+
+        function updateSelectedChannelUI(channel) {
+            const fallback = { id: 'none', name: 'Sin Canal', avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' };
+            if(!channel) channel = channels[0] || fallback;
+            channelSelectedUI.innerHTML = `<img src="${channel.avatar}" class="channel-avatar-small"> <span>${channel.name}</span>`;
+        }
+
+        channelSelectedUI.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (channels.length > 0) {
+                channelOptionsUI.classList.toggle('select-hide');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!customChannelSelect.contains(e.target)) {
+                channelOptionsUI.classList.add('select-hide');
+            }
+        });
+
+        document.getElementById('btn-add-channel').addEventListener('click', () => {
+            const name = newChannelName.value.trim();
+            const avatar = newChannelAvatar.value.trim() || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            if (!name) return alert('Por favor, ingresa el nombre del canal.');
+            channels.push({ id: 'ch_' + Date.now(), name, avatar });
+            newChannelName.value = ''; newChannelAvatar.value = '';
+            saveChannels();
+        });
+
+        window.deleteChannel = (id) => {
+            channels = channels.filter(ch => ch.id !== id);
+            // Si borran un canal, los guiones huérfanos pasan al primer canal disponible (o se quedan sin canal)
+            const fallbackId = channels.length > 0 ? channels[0].id : 'none';
+            notes.forEach(n => { if (n.channelId === id) n.channelId = fallbackId; }); 
+            triggerMasterSave(true);
+            saveChannels();
+        };
+
+        // Utilidad de Fecha Relativa
+        function timeSince(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) return "hace " + interval + (interval === 1 ? " año" : " años");
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) return "hace " + interval + (interval === 1 ? " mes" : " meses");
+            interval = Math.floor(seconds / 604800);
+            if (interval >= 1) return "hace " + interval + (interval === 1 ? " semana" : " semanas");
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) return "hace " + interval + (interval === 1 ? " día" : " días");
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) return "hace " + interval + (interval === 1 ? " hora" : " horas");
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) return "hace " + interval + (interval === 1 ? " minuto" : " minutos");
+            return "hace unos segundos";
+        }
+
         // --- 3. INICIALIZACIÓN Y SINCRONIZACIÓN ---
         async function bootApp() {
             document.getElementById('pace-select').value = currentWPM;
+            renderChannelsSettingsUI();
             
             const localData = await getLocalVault('compressed_notes');
             if (localData) {
                 notes = JSON.parse(LZString.decompressFromUTF16(localData) || '[]');
+                verifyAndMigrate();
                 renderNotesGrid();
             } else {
                 renderNotesGrid();
@@ -419,6 +559,7 @@
                     const cloudJSON = LZString.decompressFromUTF16(cloudCompressed);
                     if (cloudJSON) {
                         notes = JSON.parse(cloudJSON);
+                        verifyAndMigrate();
                         await setLocalVault('compressed_notes', cloudCompressed);
                         renderNotesGrid(); 
                         syncStatus.textContent = "☁️ Sincronizado";
@@ -428,6 +569,28 @@
             });
         }
         bootApp();
+
+        function verifyAndMigrate() {
+            let changed = false;
+            notes.forEach(note => {
+                if (note.sections && note.sections.length > 0) {
+                    note.content = note.sections.map(s => `<h2>${s.title}</h2><div>${s.content}</div>`).join('<br>');
+                    delete note.sections;
+                    changed = true;
+                }
+                // Si el guion era del antiguo "Mi Canal" o no tiene, se reasigna al primer canal que tengas
+                if (!note.channelId || note.channelId === 'ch_default' || note.channelId === 'default' || note.channelId === 'none') {
+                    if (channels.length > 0) {
+                        note.channelId = channels[0].id;
+                        changed = true;
+                    } else {
+                        note.channelId = 'none';
+                        changed = true;
+                    }
+                }
+            });
+            if(changed) triggerMasterSave();
+        }
 
         // --- 4. MOTOR DE GUARDADO ---
         async function triggerMasterSave(immediate = false) {
@@ -465,7 +628,8 @@
         }
 
         function createNewNote(openModal = true) {
-            const newNote = { id: Date.now().toString(), title: '', thumbnail: '', content: '', updatedAt: Date.now(), videos: [] };
+            const firstChannelId = channels.length > 0 ? channels[0].id : 'none';
+            const newNote = { id: Date.now().toString(), title: '', thumbnail: '', channelId: firstChannelId, content: '', updatedAt: Date.now(), videos: [], views: 0 };
             notes.push(newNote);
             triggerMasterSave(true);
             renderNotesGrid();
@@ -494,7 +658,7 @@
         });
 
         document.getElementById('btn-export-settings').addEventListener('click', () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({notes, pace: currentWPM}, null, 2));
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({notes, pace: currentWPM, channels}, null, 2));
             const a = document.createElement('a'); a.href = dataStr; a.download = `YT_ScriptPro_Backup.json`; document.body.appendChild(a); a.click(); a.remove();
         });
         document.getElementById('btn-import-settings').addEventListener('click', () => importFileInput.click());
@@ -507,13 +671,16 @@
                     const data = JSON.parse(e.target.result);
                     if (data.notes && Array.isArray(data.notes)) {
                         notes = data.notes;
+                        verifyAndMigrate();
                         const compressedString = LZString.compressToUTF16(JSON.stringify(notes));
                         await setLocalVault('compressed_notes', compressedString);
                         if(syncStatus) syncStatus.textContent = "☁️ Subiendo backup...";
                         await dbRef.set(compressedString); 
                     }
+                    if (data.channels) { channels = data.channels; saveChannels(); }
                     if (data.pace) { currentWPM = data.pace; localStorage.setItem('yt-pro-pace', data.pace); document.getElementById('pace-select').value = data.pace; }
                     if (data.fontsize) { localStorage.setItem('yt-pro-fontsize', data.fontsize); document.getElementById('font-size').value = data.fontsize; }
+                    
                     renderNotesGrid(); updateStats();
                     if(syncStatus) { syncStatus.textContent = "☁️ Sincronizado"; setTimeout(() => syncStatus.textContent = "", 3000); }
                     settingsModal.classList.remove('active');
@@ -539,19 +706,19 @@
             }
         });
 
-        // FORMATEA TIEMPO A MM:SS
         function formatTime(secs) {
             const m = Math.floor(secs / 60); const s = secs % 60;
             return `${m}:${String(s).padStart(2, '0')}`;
         }
 
-        // --- RENDERIZADO ESTILO YOUTUBE ---
-        function renderNotesGrid() {
+function renderNotesGrid() {
             notesGridUI.innerHTML = '';
+            // Seguimos ordenando por la fecha de última edición (updatedAt) para que las recientes salgan arriba
             const sortedNotes = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
             
+            const defaultFallback = { id: 'none', name: 'Sin Canal', avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' };
+
             sortedNotes.forEach(note => {
-                // Cálculo de Duración
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = note.content;
                 const rawText = tempDiv.innerText.trim();
@@ -565,7 +732,6 @@
                 const totalSeconds = scriptSeconds + clipsSecs;
                 const durationStr = formatTime(totalSeconds);
 
-                // Cálculo de Progreso (Marcatextos Verde)
                 let editedWords = 0;
                 const highlights = tempDiv.querySelectorAll('span[style*="background-color: rgb(50, 255, 126)"], span[style*="background-color: #32ff7e"], span[style*="background-color: #32FF7E"]');
                 highlights.forEach(h => {
@@ -576,13 +742,16 @@
                 let progress = totalWords > 0 ? (editedWords / totalWords) * 100 : 0;
                 if (progress > 100) progress = 100;
 
-                // Visual de la miniatura
                 const thumbHtml = note.thumbnail 
                     ? `<img src="${note.thumbnail}" class="thumbnail-img" alt="Miniatura">` 
                     : `<div class="thumbnail-placeholder">🎬</div>`;
 
-                const dateObj = new Date(note.updatedAt);
-                const dateString = dateObj.toLocaleDateString('es-MX', { timeZone: 'America/Monterrey' });
+                // --- SOLUCIÓN AQUÍ ---
+                // Lee el timestamp de creación directamente desde el ID de la nota
+                const timeAgo = timeSince(parseInt(note.id)); 
+                
+                const viewsStr = `▷ ${note.views || 0}`;
+                const channel = channels.find(c => c.id === note.channelId) || channels[0] || defaultFallback;
 
                 const card = document.createElement('div');
                 card.className = 'note-card';
@@ -597,23 +766,31 @@
                     <div class="note-info">
                         <div class="note-card-title">${note.title || 'Guion sin título'}</div>
                         <div class="note-card-footer">
-                            <span style="display:inline-block; width:24px; height:24px; background:var(--toolbar-bg); border-radius:50%; text-align:center; line-height:24px;">👤</span>
-                            Tú • Editado el ${dateString}
+                            <img src="${channel.avatar}" class="channel-avatar" alt="${channel.name}">
+                            ${channel.name} • ${viewsStr} • ${timeAgo}
                         </div>
                     </div>
                 `;
                 notesGridUI.appendChild(card);
             });
         }
-
+		
         function openNoteModal(id) {
             const note = notes.find(n => n.id === id);
             if (note) {
+                // Aumentar contador de visitas y guardar
+                note.views = (note.views || 0) + 1;
+                triggerMasterSave(true);
+
                 currentNoteId = id;
                 noteTitle.value = note.title;
                 noteThumbnail.value = note.thumbnail || '';
                 editor.innerHTML = note.content || '';
                 if (!note.videos) note.videos = [];
+                
+                const defaultFallback = { id: 'none', name: 'Sin Canal', avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' };
+                const channelObj = channels.find(c => c.id === note.channelId) || channels[0] || defaultFallback;
+                updateSelectedChannelUI(channelObj);
                 
                 modeSelect.value = 'editor';
                 modalContent.classList.remove('mode-lectura');
@@ -623,8 +800,10 @@
                 modal.classList.add('active');
                 
                 const savedSize = localStorage.getItem('yt-pro-fontsize') || '18px';
-                document.getElementById('font-size').value = savedSize;
-                editor.style.fontSize = savedSize;
+                const fontSelect = document.getElementById('font-size');
+                if([...fontSelect.options].some(o => o.value === savedSize)) fontSelect.value = savedSize;
+                else fontSelect.value = '18px';
+                editor.style.fontSize = fontSelect.value;
                 
                 applySyntaxHighlighting();
                 lastEditorState = editor.innerHTML; 
@@ -639,7 +818,7 @@
             triggerMasterSave(true);
             modal.classList.remove('active');
             modalContent.classList.remove('maximized');
-            renderNotesGrid(); // Refresca la barra de progreso al cerrar
+            renderNotesGrid();
         }
 
         // --- EDITOR Y CÁLCULOS ---
@@ -661,7 +840,6 @@
             }
         });
 
-        // 10% OPACIDAD SÓLO EN CORCHETES LITERALES Y ===
         function applySyntaxHighlighting() {
             if (modeSelect.value !== 'editor') return;
             const sel = window.getSelection();
@@ -779,7 +957,6 @@
 
         function applyHighlight() { document.execCommand('backColor', false, '#32ff7e'); editor.focus(); triggerMasterSave(); }
         document.getElementById('btn-toggle-highlights').addEventListener('click', () => editor.classList.toggle('hide-highlights'));
-
         function clearFormatting() { document.execCommand('removeFormat', false, null); document.execCommand('formatBlock', false, 'div'); editor.focus(); triggerMasterSave(); }
 
         function format(command, val=null) { document.execCommand(command, false, val); editor.focus(); triggerMasterSave(); }
