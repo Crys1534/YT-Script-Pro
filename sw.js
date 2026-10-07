@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yt-script-pro-v14';
+const CACHE_NAME = 'yt-script-pro-v16';
 const urlsToCache = [
   './index.html',
   './manifest.json'
