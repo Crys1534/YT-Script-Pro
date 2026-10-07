@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v16.1 - Custom Channels Fix</title>
+    <title>YT Script Writer Pro v16.1 - Ultimate Update</title>
     
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="./manifest.json">
@@ -79,7 +79,7 @@
         .controls-row { display: flex; gap: 10px; align-items: center; }
 
         main { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
-        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 15px;}
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
         .action-buttons { display: flex; gap: 10px; }
         .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px 15px; }
 
@@ -91,9 +91,9 @@
         .thumbnail-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .thumbnail-placeholder { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 3rem; opacity: 0.2; }
         
-        .duration-badge { position: absolute; bottom: 10px; right: 6px; background-color: rgba(0, 0, 0, 0.85); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; z-index: 2; letter-spacing: 0.5px;}
+        .duration-badge { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.85); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; z-index: 2; letter-spacing: 0.5px;}
         
-        .progress-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background-color: rgba(255,255,255,0.2); z-index: 2; }
+        .progress-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background-color: rgba(255,255,255,0.2); z-index: 2; }
         .progress-bar-fill { height: 100%; background-color: var(--accent-color); transition: width 0.3s; }
         
         .note-info { display: flex; flex-direction: column; gap: 4px; padding: 0 5px;}
@@ -223,7 +223,7 @@
             </div>
         </header>
 
-        <main style="padding-top: 4px;">
+        <main>
             <div class="header-actions">
                 <h2>Mis Videos</h2>
                 <div class="action-buttons">
@@ -368,6 +368,12 @@
                         </div>
                     </div>
                     
+                    <!-- BOTÓN DE RECARGA FORZADA -->
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 20px; text-align: center;">
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom:15px;">¿La app no se actualiza o se quedó pegada?</p>
+                        <button id="btn-force-reload" class="btn-secondary" style="width: 100%;">🔄 Buscar Actualizaciones / Recargar</button>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -441,8 +447,6 @@
 
         // --- SISTEMA DE CANALES MULTIPLES ---
         let channels = JSON.parse(localStorage.getItem('yt-pro-channels')) || [];
-        
-        // ELIMINADOR ABSOLUTO DEL "Mi Canal" GENÉRICO
         channels = channels.filter(c => c.id !== 'ch_default' && c.id !== 'default');
 
         function saveChannels() {
@@ -466,7 +470,6 @@
                 channelsListUI.appendChild(div);
             });
 
-            // Render opciones para el menú desplegable en el editor
             channelOptionsUI.innerHTML = '';
             channels.forEach(ch => {
                 const opt = document.createElement('div');
@@ -514,14 +517,12 @@
 
         window.deleteChannel = (id) => {
             channels = channels.filter(ch => ch.id !== id);
-            // Si borran un canal, los guiones huérfanos pasan al primer canal disponible (o se quedan sin canal)
             const fallbackId = channels.length > 0 ? channels[0].id : 'none';
             notes.forEach(n => { if (n.channelId === id) n.channelId = fallbackId; }); 
             triggerMasterSave(true);
             saveChannels();
         };
 
-        // Utilidad de Fecha Relativa
         function timeSince(date) {
             const seconds = Math.floor((new Date() - date) / 1000);
             let interval = Math.floor(seconds / 31536000);
@@ -578,15 +579,9 @@
                     delete note.sections;
                     changed = true;
                 }
-                // Si el guion era del antiguo "Mi Canal" o no tiene, se reasigna al primer canal que tengas
                 if (!note.channelId || note.channelId === 'ch_default' || note.channelId === 'default' || note.channelId === 'none') {
-                    if (channels.length > 0) {
-                        note.channelId = channels[0].id;
-                        changed = true;
-                    } else {
-                        note.channelId = 'none';
-                        changed = true;
-                    }
+                    if (channels.length > 0) { note.channelId = channels[0].id; changed = true; } 
+                    else { note.channelId = 'none'; changed = true; }
                 }
             });
             if(changed) triggerMasterSave();
@@ -711,9 +706,8 @@
             return `${m}:${String(s).padStart(2, '0')}`;
         }
 
-function renderNotesGrid() {
+        function renderNotesGrid() {
             notesGridUI.innerHTML = '';
-            // Seguimos ordenando por la fecha de última edición (updatedAt) para que las recientes salgan arriba
             const sortedNotes = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
             
             const defaultFallback = { id: 'none', name: 'Sin Canal', avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' };
@@ -746,10 +740,7 @@ function renderNotesGrid() {
                     ? `<img src="${note.thumbnail}" class="thumbnail-img" alt="Miniatura">` 
                     : `<div class="thumbnail-placeholder">🎬</div>`;
 
-                // --- SOLUCIÓN AQUÍ ---
-                // Lee el timestamp de creación directamente desde el ID de la nota
                 const timeAgo = timeSince(parseInt(note.id)); 
-                
                 const viewsStr = `▷ ${note.views || 0}`;
                 const channel = channels.find(c => c.id === note.channelId) || channels[0] || defaultFallback;
 
@@ -774,11 +765,10 @@ function renderNotesGrid() {
                 notesGridUI.appendChild(card);
             });
         }
-		
+
         function openNoteModal(id) {
             const note = notes.find(n => n.id === id);
             if (note) {
-                // Aumentar contador de visitas y guardar
                 note.views = (note.views || 0) + 1;
                 triggerMasterSave(true);
 
@@ -971,13 +961,51 @@ function renderNotesGrid() {
         document.getElementById('pace-select').addEventListener('change', (e) => {
             currentWPM = parseInt(e.target.value); localStorage.setItem('yt-pro-pace', currentWPM); updateStats();
         });
-        
+
+        // Lógica del botón de Recarga Forzada
+        document.getElementById('btn-force-reload').addEventListener('click', () => {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    for (let name of names) caches.delete(name);
+                });
+            }
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for (let registration of registrations) registration.update();
+                });
+            }
+            alert('🔄 Limpiando caché y recargando la aplicación...');
+            window.location.reload(true);
+        });
+
         // --- 5. REGISTRO DEL SERVICE WORKER (Para PWA) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(registration => { console.log('ServiceWorker registrado con éxito con el scope: ', registration.scope); })
+                    .then(registration => { 
+                        console.log('ServiceWorker registrado con éxito'); 
+                        
+                        // Detector de nuevas actualizaciones
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    if (confirm('✨ Nueva versión de YT Script Pro disponible. ¿Deseas recargar la aplicación para actualizarla?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
                     .catch(err => { console.log('El registro del ServiceWorker falló: ', err); });
+            });
+
+            // Forzar recarga si el Service Worker toma el control abruptamente
+            let refreshing;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                window.location.reload();
+                refreshing = true;
             });
         }
     </script>
