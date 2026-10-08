@@ -64,6 +64,7 @@
         /* Custom Select para Avatares */
         .custom-select { position: relative; font-size: 0.85rem; user-select: none; }
         .select-selected { background: var(--toolbar-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 140px;}
+        .select-selected * { pointer-events: none; } /* <-- EVITA BUGS TÁCTILES AL TOCAR LA IMAGEN EN CELULAR */
         .select-selected:after { content: "▼"; font-size: 0.6rem; margin-left: auto; }
         .select-items { position: absolute; background-color: var(--toolbar-bg); top: 100%; left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 6px; margin-top: 4px; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 6px var(--shadow); }
         .select-items div { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); }
@@ -128,7 +129,7 @@
 
         #settings-modal .modal-content { width: 95%; max-width: 500px; height: auto; max-height: 90vh; border-radius: 12px; border: 1px solid var(--border-color); }
 
-        .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;}
+.modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; position: relative; z-index: 50;}
         
         .header-inputs { display: flex; flex: 1; gap: 10px; min-width: 250px;}
         .title-input { flex: 2; font-size: 1.4rem; font-weight: bold; background: transparent; border: none; color: var(--text-color); outline: none; min-width: 100px; }
