@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Script Writer Pro v16.1 - Ultimate Update</title>
+    <title>YT Script Writer Pro v16.1 - Custom Channels Fix</title>
     
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="./manifest.json">
@@ -64,7 +64,6 @@
         /* Custom Select para Avatares */
         .custom-select { position: relative; font-size: 0.85rem; user-select: none; }
         .select-selected { background: var(--toolbar-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 140px;}
-        .select-selected * { pointer-events: none; } /* <-- EVITA BUGS TÁCTILES AL TOCAR LA IMAGEN EN CELULAR */
         .select-selected:after { content: "▼"; font-size: 0.6rem; margin-left: auto; }
         .select-items { position: absolute; background-color: var(--toolbar-bg); top: 100%; left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 6px; margin-top: 4px; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 6px var(--shadow); }
         .select-items div { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); }
@@ -129,7 +128,7 @@
 
         #settings-modal .modal-content { width: 95%; max-width: 500px; height: auto; max-height: 90vh; border-radius: 12px; border: 1px solid var(--border-color); }
 
-.modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; position: relative; z-index: 50;}
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--surface-color); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;}
         
         .header-inputs { display: flex; flex: 1; gap: 10px; min-width: 250px;}
         .title-input { flex: 2; font-size: 1.4rem; font-weight: bold; background: transparent; border: none; color: var(--text-color); outline: none; min-width: 100px; }
@@ -369,12 +368,6 @@
                         </div>
                     </div>
                     
-                    <!-- BOTÓN DE RECARGA FORZADA -->
-                    <div style="border-top: 1px solid var(--border-color); padding-top: 20px; text-align: center;">
-                        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom:15px;">¿La app no se actualiza o se quedó pegada?</p>
-                        <button id="btn-force-reload" class="btn-secondary" style="width: 100%;">🔄 Buscar Actualizaciones / Recargar</button>
-                    </div>
-                    
                 </div>
             </div>
         </div>
@@ -448,6 +441,8 @@
 
         // --- SISTEMA DE CANALES MULTIPLES ---
         let channels = JSON.parse(localStorage.getItem('yt-pro-channels')) || [];
+        
+        // ELIMINADOR ABSOLUTO DEL "Mi Canal" GENÉRICO
         channels = channels.filter(c => c.id !== 'ch_default' && c.id !== 'default');
 
         function saveChannels() {
@@ -471,6 +466,7 @@
                 channelsListUI.appendChild(div);
             });
 
+            // Render opciones para el menú desplegable en el editor
             channelOptionsUI.innerHTML = '';
             channels.forEach(ch => {
                 const opt = document.createElement('div');
@@ -518,12 +514,14 @@
 
         window.deleteChannel = (id) => {
             channels = channels.filter(ch => ch.id !== id);
+            // Si borran un canal, los guiones huérfanos pasan al primer canal disponible (o se quedan sin canal)
             const fallbackId = channels.length > 0 ? channels[0].id : 'none';
             notes.forEach(n => { if (n.channelId === id) n.channelId = fallbackId; }); 
             triggerMasterSave(true);
             saveChannels();
         };
 
+        // Utilidad de Fecha Relativa
         function timeSince(date) {
             const seconds = Math.floor((new Date() - date) / 1000);
             let interval = Math.floor(seconds / 31536000);
@@ -580,9 +578,15 @@
                     delete note.sections;
                     changed = true;
                 }
+                // Si el guion era del antiguo "Mi Canal" o no tiene, se reasigna al primer canal que tengas
                 if (!note.channelId || note.channelId === 'ch_default' || note.channelId === 'default' || note.channelId === 'none') {
-                    if (channels.length > 0) { note.channelId = channels[0].id; changed = true; } 
-                    else { note.channelId = 'none'; changed = true; }
+                    if (channels.length > 0) {
+                        note.channelId = channels[0].id;
+                        changed = true;
+                    } else {
+                        note.channelId = 'none';
+                        changed = true;
+                    }
                 }
             });
             if(changed) triggerMasterSave();
@@ -741,7 +745,7 @@
                     ? `<img src="${note.thumbnail}" class="thumbnail-img" alt="Miniatura">` 
                     : `<div class="thumbnail-placeholder">🎬</div>`;
 
-                const timeAgo = timeSince(parseInt(note.id)); 
+                const timeAgo = timeSince(note.updatedAt);
                 const viewsStr = `▷ ${note.views || 0}`;
                 const channel = channels.find(c => c.id === note.channelId) || channels[0] || defaultFallback;
 
@@ -770,6 +774,7 @@
         function openNoteModal(id) {
             const note = notes.find(n => n.id === id);
             if (note) {
+                // Aumentar contador de visitas y guardar
                 note.views = (note.views || 0) + 1;
                 triggerMasterSave(true);
 
@@ -962,51 +967,13 @@
         document.getElementById('pace-select').addEventListener('change', (e) => {
             currentWPM = parseInt(e.target.value); localStorage.setItem('yt-pro-pace', currentWPM); updateStats();
         });
-
-        // Lógica del botón de Recarga Forzada
-        document.getElementById('btn-force-reload').addEventListener('click', () => {
-            if ('caches' in window) {
-                caches.keys().then(names => {
-                    for (let name of names) caches.delete(name);
-                });
-            }
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(registrations => {
-                    for (let registration of registrations) registration.update();
-                });
-            }
-            alert('🔄 Limpiando caché y recargando la aplicación...');
-            window.location.reload(true);
-        });
-
+        
         // --- 5. REGISTRO DEL SERVICE WORKER (Para PWA) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(registration => { 
-                        console.log('ServiceWorker registrado con éxito'); 
-                        
-                        // Detector de nuevas actualizaciones
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    if (confirm('✨ Nueva versión de YT Script Pro disponible. ¿Deseas recargar la aplicación para actualizarla?')) {
-                                        window.location.reload();
-                                    }
-                                }
-                            });
-                        });
-                    })
+                    .then(registration => { console.log('ServiceWorker registrado con éxito con el scope: ', registration.scope); })
                     .catch(err => { console.log('El registro del ServiceWorker falló: ', err); });
-            });
-
-            // Forzar recarga si el Service Worker toma el control abruptamente
-            let refreshing;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (refreshing) return;
-                window.location.reload();
-                refreshing = true;
             });
         }
     </script>
